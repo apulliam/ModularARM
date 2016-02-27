@@ -6,7 +6,7 @@
             "value": "test-vnet"
         },
         "vnetResGroup": {
-            "value": "apulliam-invs-core"
+            "value": "apulliam-test"
         }
     }
 }

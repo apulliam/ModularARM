@@ -6,22 +6,22 @@
       "value": "East US"
     },
     "localAdminUsername": {
-      "value": "apulliam"
+      "value": "testme"
     },
     "localAdminPassword": {
-      "value": "n7923n@ryy"
+      "value": "test@me1"
     },
     "appName": {
-      "value": "invs"
+      "value": "test"
     },
     "domainAdminUsername": {
-      "value": "apulliam"
+      "value": "testme"
     },
     "domainAdminPassword": {
-      "value": "n7923n@ryy"
+      "value": "test@me1"
     },
       "domainName": {
-          "value": "apulliam.com"
+          "value": "test.com"
       }
   }
 }

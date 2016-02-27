@@ -1,34 +1,45 @@
 ﻿{
-  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "domainName": {
-      "value": "apulliam.com"
-    },
-    "domainAdminUsername": {
-      "value": "apulliam"
-    },
-    "domainAdminPassword": {
-      "value": "n7923n@ryy"
-    },
-    "appName": {
-      "value": "test"
-    },
-    "vnetName": {
-      "value": "test-vnet"
-    },
-    "vmSaNames": {
-      "value": [ "aeoilizsox3fetestvmsa0", "265gjegpvix22testvmsa1", "ole6gm5r2rezatestvmsa2", "2ufjxozj22dsktestvmsa3", "pbdrdkum6z6zktestvmsa4" ]
-    },
-    "subnetName": {
-      "value": "test-dc"
-    },
-    "diagSaName": {
-      "value": "testdiagsa"
-    },
-      "resourceLocation": {
-          "value": "East US"
-      }
-
-  }
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "_artifactsLocation": {
+            "value": "https://raw.githubusercontent.com/apulliam/ModularARM/master"
+        },
+        "_artifactsLocationSasToken": {
+            "value": ""
+        },
+        "domainName": {
+            "value": "test.com"
+        },
+        "domainAdminUsername": {
+            "value": "testme"
+        },
+        "domainAdminPassword": {
+            "value": "test@me1"
+        },
+        "appName": {
+            "value": "test"
+        },
+        "vnetName": {
+            "value": "test-vnet"
+        },
+        "vmSaNames": {
+            "value": [
+                "56lhhyxcsjjlwtestvmsa0",
+                "kbi2ky5ajk5iqtestvmsa1",
+                "4sgfltplrof6stestvmsa2",
+                "tnzz7makxaczitestvmsa3",
+                "bpbmzdd42qisetestvmsa4"
+            ]
+        },
+        "subnetName": {
+            "value": "test-dc"
+        },
+        "diagSaName": {
+            "value": "testdiagsa"
+        },
+        "resourceLocation": {
+            "value": "East US"
+        }
+    }
 }

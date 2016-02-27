@@ -3,19 +3,19 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "localAdminUsername": {
-      "value": "apulliam"
+      "value": "testme"
     },
     "localAdminPassword": {
-      "value": "n7923n@ryy"
+      "value": "test@me1"
     },
     "appName": {
       "value": "test"
     },
     "vmSaNames": {
-      "value": [ "aeoilizsox3fetestvmsa0", "265gjegpvix22testvmsa1", "ole6gm5r2rezatestvmsa2", "2ufjxozj22dsktestvmsa3", "pbdrdkum6z6zktestvmsa4" ]
+      "value": [ "56lhhyxcsjjlwtestvmsa0", "kbi2ky5ajk5iqtestvmsa1", "4sgfltplrof6stestvmsa2", "tnzz7makxaczitestvmsa3", "bpbmzdd42qisetestvmsa4" ]
     },
     "vnetResourceGroup": {
-      "value": "apulliam-invs-core"
+      "value": "apulliam-test"
     },
     "vnetName": {
       "value": "test-vnet"
