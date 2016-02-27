@@ -131,7 +131,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'), '/Investran/webserver/webserver.json', parameters('_artifactsLocationSasToken'))]",
+                    "uri": "[concat(parameters('_artifactsLocation'), 'webserver/webserver.json', parameters('_artifactsLocationSasToken'))]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -182,7 +182,7 @@
         //  "properties": {
         //    "mode": "Incremental",
         //    "templateLink": {
-        //      "uri": "[concat(parameters('_artifactsLocation'), '/Investran/webserver/webapi.json', parameters('_artifactsLocationSasToken'))]",
+        //      "uri": "[concat(parameters('_artifactsLocation'), 'webserver/webapi.json', parameters('_artifactsLocationSasToken'))]",
         //      "contentVersion": "1.0.0.0"
         //    },
         //    "parameters": { }

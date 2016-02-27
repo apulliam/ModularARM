@@ -23,6 +23,9 @@
         "vnetName": {
             "value": "test-vnet"
         },
+         "vnetResourceGroup": {
+            "value": "test-vnet"
+        },
         "vmSaNames": {
             "value": [
                 "56lhhyxcsjjlwtestvmsa0",

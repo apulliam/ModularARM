@@ -37,10 +37,10 @@
         "description": "Azure region where all resources will be deployed. This is distinct from resource group location."
       }
     },
-    "vnet": {
-      "type": "object",
+    "vnetResourceGroup": {
+      "type": "string",
       "metadata": {
-        "description": "Object describing an existing VNET resource.  Must have addressSpace and subnets properties"
+        "description": "Name of Resource Group where the VNET is deployed"
       }
     },
     "vnetName": {
@@ -122,9 +122,8 @@
     }
   },
   "variables": {
-    "vnetName": "[parameters('vnetName')]",
-    "resourceLocation": "[parameters('resourceLocation')]",
-    "vnetID": "[resourceId(resourceGroup().name, 'Microsoft.Network/virtualNetworks', variables('vnetName'))]",
+    "lookupVnetDeploymentName": "[concat(deployment().name,'-lookupVnet')]",
+    "vnetID": "[resourceId(parameters('vnetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
     "dcAvailSetName": "[concat(parameters('appName'), '-dc-as')]",
     "pdcNicName": "[concat(parameters('pdcName'),'-nic')]",
     "bdcNicName": "[concat(parameters('bdcName'),'-nic')]",
@@ -142,21 +141,21 @@
     "dcDataDiskSize": 1000
   },
   "resources": [
+   
     {
       "type": "Microsoft.Compute/availabilitySets",
       "name": "[variables('dcAvailSetName')]",
       "apiVersion": "2015-06-15",
-      "location": "[variables('resourceLocation')]",
+      "location": "[parameters('resourceLocation')]",
       "properties": {
       }
     },
     {
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[variables('pdcNicName')]",
-      "location": "[variables('resourceLocation')]",
+      "location": "[parameters('resourceLocation')]",
       "apiVersion": "2015-06-15",
       "dependsOn": [
-        //"[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -173,12 +172,11 @@
         ]
       }
     },
-
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('pdcName')]",
-      "location": "[variables('resourceLocation')]",
+      "location": "[parameters('resourceLocation')]",
       "dependsOn": [
         "[concat('Microsoft.Network/networkInterfaces/', variables('pdcNicName'))]",
         "[concat('Microsoft.Compute/availabilitySets/',variables('dcAvailSetName'))]"
@@ -236,7 +234,7 @@
         {
           "name": "setupPDC",
           "type": "extensions",
-          "location": "[variables('resourceLocation')]",
+          "location": "[parameters('resourceLocation')]",
           "apiVersion": "2015-06-15",
           "dependsOn": [
             "[concat('Microsoft.Compute/virtualMachines/', parameters('pdcName'))]"
@@ -270,14 +268,12 @@
         }
       ]
     },
-
     {
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[variables('bdcNicName')]",
-      "location": "[variables('resourceLocation')]",
+      "location": "[parameters('resourceLocation')]",
       "apiVersion": "2015-06-15",
       "dependsOn": [
-        //"[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
         "[concat('Microsoft.Compute/virtualMachines/',parameters('pdcName'),'/extensions/setupPDC')]"
       ],
       "properties": {
@@ -300,12 +296,11 @@
         }
       }
     },
-
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('bdcName')]",
-      "location": "[variables('resourceLocation')]",
+      "location": "[parameters('resourceLocation')]",
       "dependsOn": [
         "[concat('Microsoft.Network/networkInterfaces/', variables('bdcNicName'))]",
         "[concat('Microsoft.Compute/availabilitySets/',variables('dcAvailSetName'))]"
@@ -364,7 +359,7 @@
         {
           "name": "setupBDC",
           "type": "extensions",
-          "location": "[variables('resourceLocation')]",
+          "location": "[parameters('resourceLocation')]",
           "apiVersion": "2015-06-15",
           "dependsOn": [
             "[concat('Microsoft.Compute/virtualMachines/', parameters('bdcName'))]"
@@ -395,32 +390,52 @@
               }
             }
           }
-        },
-
-
-
-        {
-          "type": "Microsoft.Network/virtualNetworks",
-          "name": "[variables('vnetName')]",
-          "location": "[variables('resourceLocation')]",
-          "apiVersion": "2015-06-15",
-          "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/',parameters('bdcName'))]"
-          ],
-          "properties": {
-            "addressSpace": "[parameters('vnet').addressSpace]",
-            "dhcpOptions": {
-              "dnsServers": [
-                "[parameters('pdcInternalIpAddress')]",
-                "[parameters('bdcInternalIpAddress')]"
-              ]
-            },
-            "subnets": "[parameters('vnet').subnets]"
-          }
         }
       ]
+    },
+     {
+      "name": "[variables('lookupVnetDeploymentName')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [ ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/domain/lookupVnet.json', parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vnetName": {
+            "value": "[parameters('vnetName')]"
+          },
+
+          "vnetResGroup": {
+            "value": "[parameters(vnetResourceGroup')]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[parameters('vnetName')]",
+      "location": "[parameters('resourceLocation')]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/',parameters('bdcName'))]"
+      ],
+      "properties": {
+        "addressSpace": "[reference(variables('lookupVnetDeploymentName')).outputs.vnet.value.addressSpace]",
+        "dhcpOptions": {
+          "dnsServers": [
+            "[parameters('pdcInternalIpAddress')]",
+            "[parameters('bdcInternalIpAddress')]"
+          ]
+        },
+        "subnets": "[reference(variables('lookupVnetDeploymentName')).outputs.vnet.value.subnets]"
+      }
     }
   ],
+
   "outputs": {
   }
 }

@@ -136,7 +136,7 @@
       "storageDeploymentName":"[concat(deployment().name,'-storage')]",
       "vnetDeploymentName":"[concat(deployment().name,'-vnet')]",
       "jumpboxDeploymentName" :"[concat(deployment().name,'-jumpbox')]",
-      "domainDeploymentName" :"[concat(deployment().name,'-domainDeploy')]"
+      "domainDeploymentName" :"[concat(deployment().name,'-domain')]"
   },
   "resources": [
     {
@@ -249,7 +249,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('_artifactsLocation'), '/domain/domainDeploy.json', parameters('_artifactsLocationSasToken'))]",
+          "uri": "[concat(parameters('_artifactsLocation'), '/domain/domain.json', parameters('_artifactsLocationSasToken'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {

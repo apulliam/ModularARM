@@ -50,8 +50,6 @@
                 "description": "Name of the subnet where the jumpbox should be deployed"
             }
         },
-      
-       
         "localAdminPassword": {
             "type": "securestring",
             "metadata": {
@@ -102,7 +100,27 @@
         ]
     },
     "resources": [
-        
+        {
+            "name": "[variables('sqlalwaysonDeploymentName')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/sqlalwayson/sqlalwayson.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vmSaNames": {
+                        "value": "[variables('vmSaNames')]"
+                    },
+                    "diagSaName": {
+                        "value": "[variables('diagSaName')]"
+                    }
+                }
+            }
+        }
     ],
     "outputs": {}
 }
