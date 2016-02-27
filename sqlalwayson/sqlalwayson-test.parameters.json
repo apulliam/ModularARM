@@ -8,8 +8,20 @@
         "_artifactsLocationSasToken": {
             "value": ""
         },
+        "deploymentPrefix": {
+            "value": "test"
+        },
+        "location": {
+            "value": "East US"
+        },
+        "localAdminUsername": {
+            "value": "testme"
+        },
+        "localAdminPassword": {
+            "value": "test@me1"
+        },
         "domainName": {
-            "value": "test.com"
+            "value": "test"
         },
         "domainAdminUsername": {
             "value": "testme"
@@ -17,32 +29,26 @@
         "domainAdminPassword": {
             "value": "test@me1"
         },
-        "appName": {
-            "value": "test"
+        "sqlServerServiceAccountUserName": {
+            "value": "sqltest"
         },
-        "vnetName": {
-            "value": "test-vnet"
+        "sqlServerServiceAccountPassword": {
+            "value": "test@me1"
         },
         "vnetResourceGroup": {
             "value": "apulliam-test1"
         },
-        "vmSaNames": {
-            "value": [
-                "rxq7y6cf54rhetestvmsa0",
-                "n6hovqf7lchb6testvmsa1",
-                "m7gcksv2eehgmtestvmsa2",
-                "fqb2zpfi4afh2testvmsa3",
-                "6ekul3y3aeruytestvmsa4"
-            ]
+        "vnetName": {
+            "value": "test-vnet"
         },
         "subnetName": {
-            "value": "test-dc"
+            "value": "test-db"
         },
-        "diagSaName": {
-            "value": "testdiagsa"
+        "pdcName": {
+            "value": "test-pdc"
         },
-        "resourceLocation": {
-            "value": "East US"
+        "coreResourceGroup": {
+            "value": "apulliam-test1"
         }
     }
 }

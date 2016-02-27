@@ -12,10 +12,10 @@
       "value": "test"
     },
     "vmSaNames": {
-      "value": [ "56lhhyxcsjjlwtestvmsa0", "kbi2ky5ajk5iqtestvmsa1", "4sgfltplrof6stestvmsa2", "tnzz7makxaczitestvmsa3", "bpbmzdd42qisetestvmsa4" ]
+      "value": [ "rxq7y6cf54rhetestvmsa0", "n6hovqf7lchb6testvmsa1", "m7gcksv2eehgmtestvmsa2", "fqb2zpfi4afh2testvmsa3", "6ekul3y3aeruytestvmsa4" ]
     },
     "vnetResourceGroup": {
-      "value": "apulliam-test"
+      "value": "apulliam-test1"
     },
     "vnetName": {
       "value": "test-vnet"

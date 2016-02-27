@@ -1,179 +1,207 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {
-        "deploymentPrefix": {
-            "type": "string",
-            "metadata": {
-                "description": "A prefix to use for resource names"
-            }
-        },
-        "location": {
-            "type": "string",
-            "metadata": {
-                "description": "The region to deploy the resources into"
-            }
-        },
-        "adminUsername": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the Administrator of the new VMs and Domain"
-            }
-        },
-        "adminPassword": {
-            "type": "securestring",
-            "metadata": {
-                "description": "The password for the Administrator account of the new VMs and Domain"
-            }
-        },
-        "adVMSize": {
-            "type": "string",
-            "metadata": {
-                "description": "The size of the AD VMs Created"
-            }
-        },
-        "sqlVMSize": {
-            "type": "string",
-            "metadata": {
-                "description": "The size of the SQL VMs Created"
-            }
-        },
-        "witnessVMSize": {
-            "type": "string",
-            "metadata": {
-                "description": "The size of the Witness VM Created"
-            }
-        },
-        "domainName": {
-            "type": "string",
-            "metadata": {
-                "description": "The FQDN of the AD Domain created "
-            }
-        },
-        "sqlServerServiceAccountUserName": {
-            "type": "string",
-            "metadata": {
-                "description": "The SQL Server Service account name"
-            }
-        },
-        "sqlServerServiceAccountPassword": {
-            "type": "securestring",
-            "metadata": {
-                "description": "The SQL Server Service account password"
-            }
-        },
-        "sqlLBIPAddress": {
-            "type": "string",
-            "metadata": {
-                "description": "The IP address of the new SQL ILB"
-            }
-        },
-        "vnetResourceGroup": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of Resource Group containing the VNET where SQL Server Always On Cluster should be deployed"
-            }
-        },
-        "vnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of existing VNET where SQL Server Always On Cluster should be deployed"
-            }
-        },
-        "subnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of existing subnet where SQL Server Always On Cluster should be deployed"
-            }
-        },
-        "autoPatchingDay": {
-            "type": "string",
-            "metadata": {
-                "description": "The day of a week for auto patching"
-            }
-        },
-        "autoPatchingStartHour": {
-            "type": "string",
-            "metadata": {
-                "description": "The start hour of a day for auto patching"
-            }
-        },
-        "sqlAOAGName": {
-            "type": "string",
-            "metadata": {
-                "description": "The Sql AlwaysOn Group Name"
-            }
-        },
-        "sqlAOListenerPort": {
-            "type": "string",
-            "metadata": {
-                "description": "The Sql AG Listener port"
-            }
-        },
-        "sqlAOListenerName": {
-            "type": "string",
-            "metadata": {
-                "description": "The Sql AG Listener Name"
-            }
-        },
-        "sqlServerVersion": {
-            "type": "string",
-            "metadata": {
-                "description": "The Sql Server Version"
-            }
-        },
-        "numberOfSqlVMDisks": {
-            "type": "int",
-            "metadata": {
-                "description": "The Sql VM Disk Size"
-            }
-        },
-        "workloadType": {
-            "type": "string",
-            "metadata": {
-                "description": "The Sql VM work load type"
-            }
-        },
-        "pdcName": {
-            "type": "string",
-            "metadata": {
-                "description": "The computer name of the Primary Domain Controller"
-            }
-        },
-        "sqlVMName": {
-            "type": "string",
-            "metadata": {
-                "description": "The prefix used for naming SQL Server instances"
-            },
-            "defaultValue": "[concat(parameters('appName'),'-sql')]"
-        },
-        "sqlwVMName": {
-            "type": "string",
-            "metadata": {
-                "description": "The computer name of the SQL Server witness"
-            },
-            "defaultValue": "[concat(parameters('appName'),'-fsw')]"
-        },
-        "coreResourceGroup": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of core Resource Group where the storage accounts and vnet are located."
-            }
-        }
+  "parameters": {
+    "_artifactsLocation": {
+      "type": "string"
     },
+    "_artifactsLocationSasToken": {
+      "type": "securestring"
+    },
+    "deploymentPrefix": {
+      "type": "string",
+      "metadata": {
+        "description": "A prefix to use for resource names"
+      }
+    },
+    "location": {
+      "type": "string",
+      "metadata": {
+        "description": "The region to deploy the resources into"
+      }
+    },
+     "vnetResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of Resource Group containing the VNET where SQL Server Always On Cluster should be deployed"
+      }
+    },
+    "vnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of existing VNET where SQL Server Always On Cluster should be deployed"
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of existing subnet where SQL Server Always On Cluster should be deployed"
+      }
+    },
+    "localAdminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "The local Administrator username for the SQL Always On cluster VM's"
+      }
+    },
+    "localAdminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The local Administrator password for the SQL Always On cluster VM's"
+      }
+    },
+   
+    "domainName": {
+      "type": "string",
+      "metadata": {
+        "description": "The FQDN of the AD Domain created "
+      }
+    },
+    "domainAdminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the administrator of the new domain"
+      }
+    },
+    "domainAdminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The password for the administrator account of the new domain"
+      }
+    },
+    "sqlServerServiceAccountUserName": {
+      "type": "string",
+      "metadata": {
+        "description": "The SQL Server Service account name"
+      }
+    },
+    "sqlServerServiceAccountPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The SQL Server Service account password"
+      }
+    },
+     "sqlVMSize": {
+      "type": "string",
+      "metadata": {
+        "description": "The size of the SQL VMs Created"
+      },
+      "defaultValue": "Premium_DS1"
+    },
+    "witnessVMSize": {
+      "type": "string",
+      "metadata": {
+        "description": "The size of the Witness VM Created"
+      },
+      "defaultValue": "Premium_DS1"
+    },
+    "sqlLBIPAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The IP address of the new SQL ILB"
+      },
+      "defaultValue": "10.0.2.100"
+    },
+   
+    "autoPatchingDay": {
+      "type": "string",
+      "metadata": {
+        "description": "The day of a week for auto patching"
+      },
+      "defaultValue": "Sunday"
+    },
+    "autoPatchingStartHour": {
+      "type": "string",
+      "metadata": {
+        "description": "The start hour of a day for auto patching"
+      },
+      "defaultValue": "2:00"
+    },
+   
+   
+    "sqlServerVersion": {
+      "type": "string",
+      "metadata": {
+        "description": "The Sql Server Version"
+      },
+      "defaultValue": ""
+    },
+    "numberOfSqlVMDisks": {
+      "type": "int",
+      "metadata": {
+        "description": "The number of data disks on each SQL Server VM"
+      },
+      "defaultValue": 2
+    },
+    "workloadType": {
+      "type": "string",
+      "metadata": {
+        "description": "The Sql VM work load type"
+      },
+      "defaultValue": ""
+    },
+    "pdcName": {
+      "type": "string",
+      "metadata": {
+        "description": "The computer name of the Primary Domain Controller"
+      }
+    },
+    "sqlVMName": {
+      "type": "string",
+      "metadata": {
+        "description": "The prefix used for naming SQL Server instances"
+      },
+      "defaultValue": "[concat(parameters('deploymentPrefix'),'-sql')]"
+    },
+    "sqlwVMName": {
+      "type": "string",
+      "metadata": {
+        "description": "The computer name of the SQL Server witness"
+      },
+      "defaultValue": "[concat(parameters('deploymentPrefix'),'-fsw')]"
+    },
+     "sqlAOListenerName": {
+      "type": "string",
+      "metadata": {
+        "description": "The Sql AG Listener Name"
+      },
+      "defaultValue": "[concat(parameters('sqlVMName'),'-listener')]"
+    },
+     "sqlAOListenerPort": {
+      "type": "string",
+      "metadata": {
+        "description": "The Sql AG Listener port"
+      },
+      "defaultValue": "1433"
+    },
+     "sqlAOAGName": {
+      "type": "string",
+      "metadata": {
+        "description": "The Sql AlwaysOn Group Name"
+      },
+      "defaultValue": "[concat(parameters('sqlVMName'),'-aoag')]"
+    },
+   
+    "coreResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of core Resource Group where the storage accounts and vnet are located."
+      }
+    }
+  },
     "variables": {
         "vnetID": "[resourceId(parameters('vnetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
-        "sqlAvailabilitySetName": "[concat(parameters('appName'), '-sql-as')]",
-        "sqlLBName": "sqlLoadBalancer",
-        "webServerName": "[concat(parameters('appName'),'-web')]",
+        "sqlAvailabilitySetName": "[concat(parameters('deploymentPrefix'), '-sql-as')]",
+        "sqlLBName": "[concat(parameters('sqlVMName'),'-lb')]",
+        "sqlLBFE": "sqlLBFE",
+        "sqlLBBE": "sqlLBBE",
+        "sqllbID": "[resourceId('Microsoft.Network/loadBalancers',variables('sqlLBName'))]",
+        "webServerName": "[concat(parameters('deploymentPrefix'),'-web')]",
         "webServerLoadBalancerName": "[concat(variables('webServerName'), '-lb')]",
         "sqlAOEPName": "[concat(parameters('deploymentPrefix'),'-hadr')]",
         "sharePath": "[concat(parameters('deploymentPrefix'),'-fsw')]",
         "clusterName": "[concat(parameters('deploymentPrefix'),'-fc')]",
         "sqlwNicName": "[concat(parameters('sqlwVMName'),'-nic')]",
-        "sqlLBFE": "sqlLBFE",
-        "sqlLBBE": "sqlLBBE",
-        "sqllbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbSettings').sqlLBName)]",
         "SQLAOProbe": "SQLAlwaysOnEndPointProbe",
         "windowsImagePublisher": "MicrosoftWindowsServer",
         "windowsImageOffer": "WindowsServer",
@@ -181,8 +209,7 @@
         "sqlImagePublisher": "MicrosoftSQLServer",
         "sqlImageOffer": "[parameters('sqlServerVersion')]",
         "sqlImageSku": "Enterprise",
-        "staticSubnetRef": "[concat(variables('VnetID'),'/subnets/',variables('staticSubnetName'))]",
-        "sqlSubnetRef": "[concat(variables('VnetID'),'/subnets/',variables('sqlSubnetName'))]",
+        "subnetRef": "[concat(variables('VnetID'),'/subnets/',parameters('subnetName'))]",
         "sqlBEAddressPoolID": "[concat(variables('sqllbID'),'/backendAddressPools/',variables('sqlLBBE'))]",
         "sqllbFEConfigID": "[concat(variables('sqllbID'),'/frontendIPConfigurations/',variables('sqlLBFE'))]",
         "sqllbProbeID": "[concat(variables('sqllbID'),'/probes/',variables('SQLAOProbe'))]",
@@ -282,7 +309,7 @@
                             "privateIPAllocationMethod": "Static",
                             "privateIPAddress": "[parameters('sqlLBIPAddress')]",
                             "subnet": {
-                                "id": "[variables('staticSubnetRef')]"
+                                "id": "[variables('subnetRef')]"
                             }
                         }
                     }
@@ -339,7 +366,7 @@
                         "properties": {
                             "privateIPAllocationMethod": "Dynamic",
                             "subnet": {
-                                "id": "[variables('sqlSubnetRef')]"
+                                "id": "[variables('subnetRef')]"
                             },
                             "loadBalancerBackendAddressPools": [
                                 {
@@ -364,7 +391,7 @@
                         "properties": {
                             "privateIPAllocationMethod": "Dynamic",
                             "subnet": {
-                                "id": "[variables('sqlSubnetRef')]"
+                                "id": "[variables('subnetRef')]"
                             }
                         }
                     }
@@ -392,8 +419,8 @@
                 },
                 "osProfile": {
                     "computername": "[concat(parameters('sqlVMName'), copyindex())]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
+                    "localAdminUsername": "[parameters('localAdminUsername')]",
+                    "localAdminPassword": "[parameters('localAdminPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {
@@ -444,8 +471,8 @@
                 },
                 "osProfile": {
                     "computername": "[parameters('sqlwVMName')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
+                    "localAdminUsername": "[parameters('localAdminUsername')]",
+                    "localAdminPassword": "[parameters('localAdminPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {
@@ -465,7 +492,7 @@
                     "dataDisks": [
                         {
                             "vhd": {
-                                "uri": "[concat('http://',variables('vmSaNames')[4],'.blob.core.windows.net/',parameters('vmContainerName'),'/',parameters('sqlwVMName'),'-data-1.vhd')]"
+                                "uri": "[concat('http://',variables('vmSaNames')[4],'.blob.core.windows.net/',variables('sqlVhdContainerName'),'/',parameters('sqlwVMName'),'-data-1.vhd')]"
                             },
                             "name": "[concat(parameters('sqlwVMName'),'-data-disk1')]",
                             "caching": "None",
@@ -478,7 +505,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',parameters('sqlwNicName'))]"
+                            "id": "[resourceId(resourceGroup().name,'Microsoft.Network/networkInterfaces',variables('sqlwNicName'))]"
                         }
                     ]
                 },
@@ -491,201 +518,188 @@
             }
         },
         {
-            "name": "PreparingAlwaysOnSqlServer",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2015-01-01",
-            "dependsOn": [
-                //"Microsoft.Resources/deployments/UpdatingSQL0Nic"
-            ],
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('sqlwVMName'),'/CreateFileShareWitness')]",
+            "apiVersion": "2015-06-15",
+            "location": "[parameters('location')]",
             "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('templatesBaseUrl'),'/sqlalwayson/preparingSqlServer.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "sqlVMName": {
-                        "value": "[parameters('sqlVMName')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    },
-                    "availabilitySet": {
-                        "value": "[reference('ProvisioningNetworkStorageAGSet').outputs.sqlAvailabilitySetName.value]"
-                    },
-                    "adminUsername": {
-                        "value": "[parameters('adminUsername')]"
-                    },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
-                    },
-                    "domainName": {
-                        "value": "[parameters('domainName')]"
-                    },
-                    "sqlAOPrepareModulesURL": {
-                        "value": "[variables('configuration').sqlAOPrepareModulesURL]"
-                    },
-                    "sqlAOPrepareConfigurationFunction": {
-                        "value": "[variables('configuration').sqlAOPrepareConfigurationFunction]"
-                    },
-                    "sqlAOEPName": {
-                        "value": "[variables('sqlAOEPName')]"
-                    },
-                    "sqlServerServiceAccountUserName": {
-                        "value": "[parameters('sqlServerServiceAccountUserName')]"
-                    },
-                    "sqlServerServiceAccountPassword": {
-                        "value": "[parameters('sqlServerServiceAccountPassword')]"
-                    },
-                    "createClusterModulesURL": {
-                        "value": "[variables('configuration').createClusterModulesURL]"
-                    },
-                    "createClusterConfigurationFunction": {
-                        "value": "[variables('configuration').createClusterConfigurationFunction]"
-                    },
-                    "clusterName": {
-                        "value": "[variables('clusterName')]"
-                    },
-                    "sharePath": {
-                        "value": "[variables('sharePath')]"
-                    },
-                    "sqlAOAGName": {
-                        "value": "[parameters('sqlAOAGName')]"
-                    },
-                    "sqlAOListenerName": {
-                        "value": "[parameters('sqlAOListenerName')]"
-                    },
-                    "sqlAOListenerPort": {
-                        "value": "[parameters('sqlAOListenerPort')]"
-                    },
-                    "sqlLBName": {
-                        "value": "[variables('sqlLBName')]"
-                    },
-                    "sqlLBIPAddress": {
-                        "value": "[parameters('sqlLBIPAddress')]"
-                    },
-                    "adPDCVMName": {
-                        "value": "[parameters('pdcName')]"
-                    },
-                    "sqlwVMName": {
-                        "value": "[parameters('sqlwVMName')]"
-                    },
-                    "fswModulesURL": {
-                        "value": "[variables('configuration').fswModulesURL]"
-                    },
-                    "fswConfigurationFunction": {
-                        "value": "[variables('configuration').fswConfigurationFunction]"
-                    },
-                    "autoPatchingDay": {
-                        "value": "[parameters('autoPatchingDay')]"
-                    },
-                    "autoPatchingStartHour": {
-                        "value": "[parameters('autoPatchingStartHour')]"
-                    },
-                    "numberOfDisks": {
-                        "value": "[parameters('numberOfSqlVMDisks')]"
-                    },
-                    "workloadType": {
-                        "value": "[parameters('workloadType')]"
-                    }
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.8",
+                "autoUpgradeMinorVersion": false,
+              "settings": {
+                "modulesURL": "[concat(parameters('_artifactsLocation'), '/sqlalwayson/CreateFileShareWitness.ps1.zip')]",
+                "configurationFunction": "CreateFileShareWitness.ps1\\CreateFileShareWitness",
+                "properties": {
+                  "domainName": "[parameters('domainName')]",
+                  "SharePath": "[variables('sharePath')]",
+                  "adminCreds": {
+                    "userName": "[parameters('domainAdminUsername')]",
+                    "password": "privateSettingsRef:adminPassword"
+                  }
                 }
-            }
-        },
-        {
-            "name": "ConfiguringAlwaysOn",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2015-01-01",
-            "dependsOn": [
-                "Microsoft.Resources/deployments/PreparingAlwaysOnSqlServer"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('templatesBaseUrl'),'/sqlalwayson/configuringAlwaysOn.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "sqlVMName": {
-                        "value": "[parameters('sqlVMName')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    },
-                    "availabilitySet": {
-                        "value": "[reference('ProvisioningNetworkStorageAGSet').outputs.sqlAvailabilitySetName.value]"
-                    },
-                    "adminUsername": {
-                        "value": "[parameters('adminUsername')]"
-                    },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
-                    },
-                    "domainName": {
-                        "value": "[parameters('domainName')]"
-                    },
-                    "sqlAOPrepareModulesURL": {
-                        "value": "[variables('configuration').sqlAOPrepareModulesURL]"
-                    },
-                    "sqlAOPrepareConfigurationFunction": {
-                        "value": "[variables('configuration').sqlAOPrepareConfigurationFunction]"
-                    },
-                    "sqlAOEPName": {
-                        "value": "[variables('sqlAOEPName')]"
-                    },
-                    "sqlServerServiceAccountUserName": {
-                        "value": "[parameters('sqlServerServiceAccountUserName')]"
-                    },
-                    "sqlServerServiceAccountPassword": {
-                        "value": "[parameters('sqlServerServiceAccountPassword')]"
-                    },
-                    "createClusterModulesURL": {
-                        "value": "[variables('configuration').createClusterModulesURL]"
-                    },
-                    "createClusterConfigurationFunction": {
-                        "value": "[variables('configuration').createClusterConfigurationFunction]"
-                    },
-                    "clusterName": {
-                        "value": "[variables('clusterName')]"
-                    },
-                    "sharePath": {
-                        "value": "[variables('sharePath')]"
-                    },
-                    "sqlAOAGName": {
-                        "value": "[parameters('sqlAOAGName')]"
-                    },
-                    "sqlAOListenerName": {
-                        "value": "[parameters('sqlAOListenerName')]"
-                    },
-                    "sqlAOListenerPort": {
-                        "value": "[parameters('sqlAOListenerPort')]"
-                    },
-                    "sqlLBName": {
-                        "value": "[variables('sqlLBName')]"
-                    },
-                    "sqlLBIPAddress": {
-                        "value": "[parameters('sqlLBIPAddress')]"
-                    },
-                    "adPDCVMName": {
-                        "value": "[parameters('pdcName')]"
-                    },
-                    "sqlwVMName": {
-                        "value": "[parameters('sqlwVMName')]"
-                    },
-                    "fswModulesURL": {
-                        "value": "[variables('configuration').fswModulesURL]"
-                    },
-                    "fswConfigurationFunction": {
-                        "value": "[variables('configuration').fswConfigurationFunction]"
-                    },
-                    "numberOfDisks": {
-                        "value": "[parameters('numberOfSqlVMDisks')]"
-                    },
-                    "workloadType": {
-                        "value": "[parameters('workloadType')]"
+              },
+                "protectedSettings": {
+                    "items": {
+                        "adminPassword": "[parameters('domainAdminPassword')]"
                     }
                 }
             }
         }
+        //{
+        //    "apiVersion": "2015-06-15",
+        //    "type": "Microsoft.Compute/virtualMachines/extensions",
+        //    "name": "[concat(parameters('sqlVMName'),'0/SqlVmIaasExtension')]",
+        //    "location": "[parameters('location')]",
+        //    "properties": {
+        //        "type": "SqlIaaSAgent",
+        //        "publisher": "Microsoft.SqlServer.Management",
+        //        "typeHandlerVersion": "1.2",
+        //        "autoUpgradeMinorVersion": "true",
+        //        "settings": {
+        //            "AutoTelemetrySettings": {
+        //                "Region": "[parameters('location')]"
+        //            },
+        //            "AutoPatchingSettings": {
+        //                "PatchCategory": "WindowsMandatoryUpdates",
+        //                "Enable": true,
+        //                "DayOfWeek": "[parameters('autoPatchingDay')]",
+        //                "MaintenanceWindowStartingHour": "[parameters('autoPatchingStartHour')]",
+        //                "MaintenanceWindowDuration": "60"
+        //            },
+        //            "AutoBackupSettings": {
+        //                "Enable": false,
+        //                "RetentionPeriod": "30",
+        //                "EnableEncryption": false
+        //            }
+        //        }
+        //    }
+        //},
+        //{
+        //    "apiVersion": "2015-06-15",
+        //    "type": "Microsoft.Compute/virtualMachines/extensions",
+        //    "name": "[concat(parameters('sqlVMName'),'1/SqlVmIaasExtension')]",
+        //    "location": "[parameters('location')]",
+        //    "properties": {
+        //        "type": "SqlIaaSAgent",
+        //        "publisher": "Microsoft.SqlServer.Management",
+        //        "typeHandlerVersion": "1.2",
+        //        "autoUpgradeMinorVersion": "true",
+        //        "settings": {
+        //            "AutoTelemetrySettings": {
+        //                "Region": "[parameters('location')]"
+        //            },
+        //            "AutoPatchingSettings": {
+        //                "PatchCategory": "WindowsMandatoryUpdates",
+        //                "Enable": true,
+        //                "DayOfWeek": "[parameters('autoPatchingDay')]",
+        //                "MaintenanceWindowStartingHour": "[parameters('autoPatchingStartHour')]",
+        //                "MaintenanceWindowDuration": "60"
+        //            },
+        //            "AutoBackupSettings": {
+        //                "Enable": false,
+        //                "RetentionPeriod": "30",
+        //                "EnableEncryption": false
+        //            }
+        //        }
+        //    }
+        //},
+        //{
+        //    "type": "Microsoft.Compute/virtualMachines/extensions",
+        //    "name": "[concat(parameters('sqlVMName'),'0/sqlAOPrepare')]",
+        //    "apiVersion": "2015-06-15",
+        //    "location": "[parameters('location')]",
+        //    "dependsOn": [
+        //        "[concat('Microsoft.Compute/virtualMachines/',parameters('sqlwVMName'),'/extensions/CreateFileShareWitness')]",
+        //        "[concat('Microsoft.Compute/virtualMachines/',parameters('sqlVMName'),'0/extensions/SqlVmIaasExtension')]"
+        //    ],
+        //    "properties": {
+        //        "publisher": "Microsoft.Powershell",
+        //        "type": "DSC",
+        //        "typeHandlerVersion": "2.8",
+        //        "autoUpgradeMinorVersion": false,
+        //      "settings": {
+        //        "modulesURL": "[concat(parameters('_artifactsLocation'), '/sqlalwayson/PrepareAlwaysOnSqlServer.ps1.zip')]",
+        //        "configurationFunction": "PrepareAlwaysOnSqlServer.ps1\\PrepareAlwaysOnSqlServer",
+        //        "properties": {
+        //          "domainName": "[parameters('domainName')]",
+        //          "sqlAlwaysOnEndpointName": "[variables('sqlAOEPName')]",
+        //          "adminCreds": {
+        //            "userName": "[parameters('localAdminUsername')]",
+        //            "password": "privateSettingsRef:localAdminPassword"
+        //          },
+        //          "sqlServiceCreds": {
+        //            "userName": "[parameters('sqlServerServiceAccountUserName')]",
+        //            "password": "privateSettingsRef:SqlServerServiceAccountPassword"
+        //          },
+        //          "NumberOfDisks": "[parameters('numberOfSqlVMDisks')]",
+        //          "WorkloadType": "[parameters('workloadType')]"
+        //        }
+        //      },
+        //        "protectedSettings": {
+        //            "items": {
+        //                "localAdminPassword": "[parameters('localAdminPassword')]",
+        //                "sqlServerServiceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]"
+        //            }
+        //        }
+        //    }
+        //},
+        //{
+        //    "type": "Microsoft.Compute/virtualMachines/extensions",
+        //    "name": "[concat(parameters('sqlVMName'),'1/configuringAlwaysOn')]",
+        //    "apiVersion": "2015-06-15",
+        //    "location": "[parameters('location')]",
+        //    "properties": {
+        //        "publisher": "Microsoft.Powershell",
+        //        "type": "DSC",
+        //        "typeHandlerVersion": "2.8",
+        //        "autoUpgradeMinorVersion": false,
+        //      "settings": {
+        //        "modulesURL": "[concat(parameters('_artifactsLocation'), '/sqlalwayson/Configuring.ps1.zip')]",
+        //        "configurationFunction": "[parameters('createClusterConfigurationFunction')]",
+        //        "properties": {
+        //          "domainName": "[parameters('domainName')]",
+        //          "clusterName": "[variables('clusterName')]",
+        //          "sharePath": "[concat('\\\\',parameters('sqlwVMName'),'\\',parameters('sharePath'))]",
+        //          "nodes": [
+        //            "[concat(parameters('sqlVMName'),'0')]",
+        //            "[concat(parameters('sqlVMName'),'1')]"
+        //          ],
+        //          "sqlAlwaysOnEndpointName": "[variables('sqlAOEPName')]",
+        //          "sqlAlwaysOnAvailabilityGroupName": "[parameters('sqlAOAGName')]",
+        //          "sqlAlwaysOnAvailabilityGroupListenerName": "[parameters('sqlAOListenerName')]",
+        //          "SqlAlwaysOnAvailabilityGroupListenerPort": "[parameters('sqlAOListenerPort')]",
+        //          "databaseNames": "AutoHa-sample",
+        //          "lbName": "[variables('sqlLBName')]",
+        //          "lbAddress": "[parameters('sqlLBIPAddress')]",
+        //          "primaryReplica": "[concat(parameters('sqlVMName'),'1')]",
+        //          "secondaryReplica": "[concat(parameters('sqlVMName'),'0')]",
+        //          "dnsServerName": "[parameters('adPDCVMName')]",
+        //          "adminCreds": {
+        //            "userName": "[parameters('localAdminUsername')]",
+        //            "password": "privateSettingsRef:localAdminPassword"
+        //          },
+        //          "sqlServiceCreds": {
+        //            "userName": "[parameters('sqlServerServiceAccountUserName')]",
+        //            "password": "privateSettingsRef:sqlServerServiceAccountPassword"
+        //          },
+        //          "SQLAuthCreds": {
+        //            "userName": "sqlsa",
+        //            "password": "privateSettingsRef:sqlAuthPassword"
+        //          },
+        //          "NumberOfDisks": "[parameters('numberOfSqlVMDisks')]",
+        //          "WorkloadType": "[parameters('workloadType')]"
+        //        }
+        //      },
+        //        "protectedSettings": {
+        //            "items": {
+        //                "localAdminPassword": "[parameters('localAdminPassword')]",
+        //                "sqlServerServiceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]",
+        //                "sqlAuthPassword": "[parameters('sqlServerServiceAccountPassword')]"
+        //            }
+        //        }
+        //    }
+        //}
     ],
     "outputs": {}
 }
