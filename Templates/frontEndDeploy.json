@@ -1,0 +1,205 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "_artifactsLocation": {
+      "type": "string"
+    },
+    "_artifactsLocationSasToken": {
+      "type": "securestring"
+    },
+    "appName": {
+      "type": "string",
+      "metadata": {
+        "description": "Application name used as a prefix for ARM resources"
+      },
+      "defaultValue": "invs"
+    },
+    "resourceLocation": {
+      "type": "string",
+      "allowedValues": [
+        "East US",
+        "East US 2",
+        "West US",
+        "Central US",
+        "South Central US",
+        "North Central US",
+        "North Europe",
+        "West Europe",
+        "Southeast Asia",
+        "East Asia",
+        "Japan West",
+        "Japan East",
+        "Brazil South",
+        "Australia East",
+        "Australia Southeast"
+      ],
+      "metadata": {
+        "description": "Azure region where all resources will be deployed. This is distinct from resource group location."
+      }
+    },
+    "vnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of existing VNET to deploy Front End."
+      }
+    },
+
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the subnet where the jumpbox should be deployed"
+      }
+    },
+    "webServerSku": {
+      "type": "string",
+      "defaultValue": "Standard_A1",
+      "metadata": {
+        "description": "Size of VMs in the web server Scale Set."
+      }
+    },
+    "webServerCount": {
+      "type": "int",
+      "defaultValue": 2,
+      "metadata": {
+        "description": "Number of web server VM instances (100 or less)."
+      },
+      "maxValue": 100
+    },
+    "webApiSku": {
+      "type": "string",
+      "defaultValue": "Standard_A1",
+      "metadata": {
+        "description": "Size of VMs in the web API Scale Set."
+      }
+    },
+    "webApiCount": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of web API VM instances (100 or less)."
+      },
+      "maxValue": 100
+    },
+    "localAdminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Local Administrator password on all Front End VMs."
+      }
+    },
+    "localAdminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "Local Administrator username on all Front End VMs."
+      }
+    },
+    "domainName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the domain to join"
+      }
+    },
+    "domainJoinUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "The username of the user authorized to join machine to the domain"
+      }
+    },
+    "domainJoinPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The password of the user authorized to join machine to the domain"
+      }
+    },
+    "coreResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of core Resource Group where the storage accounts and vnet are located."
+      }
+    }
+
+  },
+
+  
+  "variables": {
+    "diagSaName": "[concat(parameters('appName'),'diagsa')]",
+    "storageResourceId": "[concat(subscription().id, '/resourceGroups/', parameters('coreResourceGroup'))]",
+    "vmSaSuffix": "[concat(parameters('appName'),'vmsa')]",
+    "vmSaNames": [
+      "[concat(uniqueString(concat(variables('storageResourceId'), variables('vmSaSuffix'), '0')), variables('vmSaSuffix'), '0')]",
+      "[concat(uniqueString(concat(variables('storageResourceId'), variables('vmSaSuffix'), '1')), variables('vmSaSuffix'), '1')]",
+      "[concat(uniqueString(concat(variables('storageResourceId'), variables('vmSaSuffix'), '2')), variables('vmSaSuffix'), '2')]",
+      "[concat(uniqueString(concat(variables('storageResourceId'), variables('vmSaSuffix'), '3')), variables('vmSaSuffix'), '3')]",
+      "[concat(uniqueString(concat(variables('storageResourceId'), variables('vmSaSuffix'), '4')), variables('vmSaSuffix'), '4')]"
+    ]
+  },
+  "resources": [
+
+    {
+      "name": "webserver",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [ ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/Investran/webserver/webserver.json', parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "appName": {
+            "value": "[parameters('appName')]"
+          },
+          "resourceLocation": {
+            "value": "[parameters('resourceLocation')]"
+          },
+          "vnetResourceGroup": {
+            "value": "[parameters('coreResourceGroup')]"
+          },
+          "vnetName": {
+            "value": "[parameters('vnetName')]"
+          },
+          "subnetName": {
+            "value": "[parameters('subnetName')]"
+          },
+          "localAdminPassword": {
+            "value": "[parameters('localAdminPassword')]"
+          },
+          "localAdminUsername": {
+            "value": "[parameters('localAdminUsername')]"
+          },
+          "domainName": {
+            "value": "[parameters('domainName')]"
+          },
+          "domainJoinUsername": {
+            "value": "[parameters('domainJoinUsername')]"
+          },
+          "domainJoinPassword": {
+            "value": "[parameters('domainJoinPassword')]"
+          },
+          "vmSaNames": {
+            "value": "[variables('vmSaNames')]"
+          },
+          "diagSaName": {
+            "value": "[variables('diagSaName')]"
+          }
+        }
+      }
+    }
+    //{
+    //  "name": "webapi",
+    //  "type": "Microsoft.Resources/deployments",
+    //  "apiVersion": "2015-01-01",
+    //  "dependsOn": [ ],
+    //  "properties": {
+    //    "mode": "Incremental",
+    //    "templateLink": {
+    //      "uri": "[concat(parameters('_artifactsLocation'), '/Investran/webserver/webapi.json', parameters('_artifactsLocationSasToken'))]",
+    //      "contentVersion": "1.0.0.0"
+    //    },
+    //    "parameters": { }
+    //  }
+    //}
+  ],
+  "outputs": {
+  }
+}

@@ -1,0 +1,185 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "resourceLocation": {
+      "type": "string",
+      "allowedValues": [
+        "East US",
+        "East US 2",
+        "West US",
+        "Central US",
+        "South Central US",
+        "North Central US",
+        "North Europe",
+        "West Europe",
+        "Southeast Asia",
+        "East Asia",
+        "Japan West",
+        "Japan East",
+        "Brazil South",
+        "Australia East",
+        "Australia Southeast"
+      ],
+      "metadata": {
+        "description": "Azure region where all resources will be deployed. This is distinct from resource group location."
+      }
+    },
+    "appName": {
+      "type": "string",
+      "metadata": {
+        "description": "Application name used as a prefix for ARM resources"
+      }
+    },
+    "vnetResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of Resource Group where the VNET is deployed"
+      }
+    },
+    "vnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of an existing VNET where the jumpbox should be deployed"
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the subnet where the jumpbox should be deployed"
+      }
+    },
+    "vmSaNames": {
+      "type": "array",
+      "metadata": {
+        "description": "Array of existing storage account names to be used for VM's"
+      }
+    },
+    "diagSaName": {
+      "type": "string",
+      "metadata": {
+        "description": "Existing storage account names to be used for diagnostics"
+      }
+    },
+    "jumpboxName": {
+      "type": "string",
+      "metadata": {
+        "description": "The computer name of the jumpbox"
+      },
+      "defaultValue": "[concat(parameters('appName'),'-jumpbox')]"
+    },
+    "localAdminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "The username of the local administrator"
+      }
+    },
+    "localAdminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The password for the local administrator"
+      }
+    },
+    "jumpboxSku": {
+      "type": "string",
+      "metadata": {
+        "description": "VM size of the jumpbox."
+      },
+      "defaultValue": "Standard_A1"
+    }
+  },
+  "variables": {
+    "vnetID": "[resourceId(parameters('vnetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
+    "jumpBoxPublicIPAddressName": "[concat(parameters('jumpBoxName'),  '-pip')]",
+    "jumpBoxOSDiskName": "[concat(parameters('jumpBoxName'), '-osdisk')]",
+    "jumpBoxVHDContainerName": "[concat(parameters('jumpBoxName'), '-vhd')]",
+    "jumpBoxNicName": "[concat(parameters('jumpBoxName'), '-nic')]",
+    "osType": {
+      "publisher": "MicrosoftWindowsServer",
+      "offer": "WindowsServer",
+      "sku": "2012-R2-Datacenter",
+      "version": "latest"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/publicIPAddresses",
+      "name": "[variables('jumpBoxPublicIPAddressName')]",
+      "location": "[parameters('resourceLocation')]",
+      "apiVersion": "2015-06-15",
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic"
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[variables('jumpBoxNicName')]",
+      "location": "[parameters('resourceLocation')]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('jumpBoxPublicIPAddressName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "[concat(parameters('jumpBoxName'), '-ipconfig')]",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('jumpBoxPublicIPAddressName'))]"
+              },
+              "subnet": {
+                "id": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[parameters('jumpBoxName')]",
+      "location": "[parameters('resourceLocation')]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', variables('jumpBoxNicName'))]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('jumpBoxSku')]"
+        },
+        "osProfile": {
+          "computerName": "[parameters('jumpBoxName')]",
+          "adminUsername": "[parameters('localAdminUsername')]",
+          "adminPassword": "[parameters('localAdminPassword')]"
+        },
+        "storageProfile": {
+          "imageReference": "[variables('osType')]",
+          "osDisk": {
+            "name": "[variables('jumpBoxOSDiskName')]",
+            "vhd": {
+              "uri": "[concat('http://',parameters('vmSaNames')[2],'.blob.core.windows.net/',variables('jumpBoxVHDContainerName'),'/',variables('jumpBoxOSDiskName'),'.vhd')]"
+            },
+            "caching": "ReadWrite",
+            "createOption": "FromImage"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('jumpBoxNicName'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": "true",
+            "storageUri": "[concat('http://',parameters('diagSaName'),'.blob.core.windows.net')]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+  }
+}

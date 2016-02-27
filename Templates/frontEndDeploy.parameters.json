@@ -1,0 +1,42 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appName": {
+      "value": "invs"
+    },
+    "resourceLocation": {
+      "value": "East US"
+    },
+    "coreResourceGroup": {
+      "value": "apulliam-invs-core"
+    },
+    "vnetName": {
+      "value": "invs-vnet"
+    },
+    "subnetName": {
+      "value": "invs-fe"
+    },
+    "webServerCount": {
+      "value": 2
+    },
+    "webApiCount": {
+      "value": 2
+    },
+    "localAdminUsername": {
+      "value": "apulliam"
+    },
+    "localAdminPassword": {
+      "value": "n7923n@ryy"
+    },
+    "domainName": {
+      "value": "apulliam.com"
+    },
+    "domainJoinUsername": {
+      "value": "apulliam"
+    },
+    "domainJoinPassword": {
+      "value": "n7923n@ryy"
+    }
+  }
+}

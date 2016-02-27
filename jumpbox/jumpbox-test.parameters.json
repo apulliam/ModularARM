@@ -1,0 +1,33 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "localAdminUsername": {
+      "value": "apulliam"
+    },
+    "localAdminPassword": {
+      "value": "n7923n@ryy"
+    },
+    "appName": {
+      "value": "test"
+    },
+    "vmSaNames": {
+      "value": [ "aeoilizsox3fetestvmsa0", "265gjegpvix22testvmsa1", "ole6gm5r2rezatestvmsa2", "2ufjxozj22dsktestvmsa3", "pbdrdkum6z6zktestvmsa4" ]
+    },
+    "vnetResourceGroup": {
+      "value": "apulliam-invs-core"
+    },
+    "vnetName": {
+      "value": "test-vnet"
+    },
+    "subnetName": {
+      "value": "test-dc"
+    },
+    "diagSaName": {
+      "value": "testdiagsa"
+    },
+      "resourceLocation": {
+          "value": "East US"
+      }
+  }
+}

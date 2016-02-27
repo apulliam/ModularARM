@@ -1,0 +1,298 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "resourceLocation": {
+      "type": "string",
+      "allowedValues": [
+        "East US",
+        "East US 2",
+        "West US",
+        "Central US",
+        "South Central US",
+        "North Central US",
+        "North Europe",
+        "West Europe",
+        "Southeast Asia",
+        "East Asia",
+        "Japan West",
+        "Japan East",
+        "Brazil South",
+        "Australia East",
+        "Australia Southeast"
+      ],
+      "metadata": {
+        "description": "Azure region where all resources will be deployed. This is distinct from resource group location."
+      }
+    },
+    "appName": {
+      "type": "string"
+    },
+    "vnetAddressRange": {
+      "type": "string",
+      "metadata": {
+        "description": "The address range of the new VNET in CIDR format"
+      },
+      "defaultValue": "10.0.0.0/16"
+    },
+    "dcSubnetAddressRange": {
+      "type": "string",
+      "metadata": {
+        "description": "The address range of the Domain Controller subnet in the new VNET"
+      },
+      "defaultValue": "10.0.0.0/24"
+    },
+    "feSubnetAddressRange": {
+      "type": "string",
+      "metadata": {
+        "description": "The address range of the Front End subnet in the new VNET"
+      },
+      "defaultValue": "10.0.1.0/24"
+    },
+    "dbSubnetAddressRange": {
+      "type": "string",
+      "metadata": {
+        "description": "The address range of the Database subnet in the new VNET"
+      },
+      "defaultValue": "10.0.2.0/24"
+    }
+  },
+  "variables": {
+    "vnetName": "[concat(parameters('appName'), '-vnet')]",
+    "dcSubnetName": "[concat(parameters('appName'), '-dc')]",
+    "feSubnetName": "[concat(parameters('appName'), '-fe')]",
+    "dbSubnetName": "[concat(parameters('appName'), '-db')]"
+    //"feSubnetNsg": "[concat(variables('feSubnetName'), '-nsg')]",
+    //"dcSubnetNsg": "[concat(variables('dcSubnetName'), '-nsg')]",
+    //"dbSubnetNsg": "[concat(variables('dbSubnetName'), '-nsg')]",
+  },
+  "resources": [
+
+    //{
+    //  "apiVersion": "2015-06-15",
+    //  "type": "Microsoft.Network/networkSecurityGroups",
+    //  "name": "[variables('feSubnetNsg')]",
+    //  "location": "[parameters('resourceLocation')]",
+    //  "properties": {
+    //    "securityRules": [
+    //      {
+    //        "name": "ALLOW_WEB",
+    //        "properties": {
+    //          "description": "Allow HTTP from Internet",
+    //          "protocol": "Tcp",
+    //          "sourcePortRange": "*",
+    //          "destinationPortRange": "80",
+    //          "sourceAddressPrefix": "Internet",
+    //          "destinationAddressPrefix": "*",
+    //          "access": "Allow",
+    //          "priority": 100,
+    //          "direction": "Inbound"
+    //        }
+    //      },
+    //      {
+    //        "name": "ALLOW_ADMIN_SUBNET",
+    //        "properties": {
+    //          "description": "Allow all traffic from Admin subnet",
+    //          "protocol": "*",
+    //          "sourcePortRange": "*",
+    //          "destinationPortRange": "*",
+    //          "sourceAddressPrefix": "10.0.3.0/24",
+    //          "destinationAddressPrefix": "*",
+    //          "access": "Allow",
+    //          "priority": 110,
+    //          "direction": "Inbound"
+    //        }
+    //      },
+    //      {
+    //        "name": "ALLOW_DB_DTC",
+    //        "properties": {
+    //          "description": "Allow DTC traffic from DB subnet",
+    //          "protocol": "TCP",
+    //          "sourcePortRange": "*", //"135,5000-5100",
+    //          "destinationPortRange": "*",
+    //          "sourceAddressPrefix": "10.0.2.0/24",
+    //          "destinationAddressPrefix": "*",
+    //          "access": "Allow",
+    //          "priority": 115,
+    //          "direction": "Inbound"
+    //        }
+    //      },
+    //      {
+    //        "name": "Block_VNET",
+    //        "properties": {
+    //          "description": "Block all traffic from VNET",
+    //          "protocol": "*",
+    //          "sourcePortRange": "*",
+    //          "destinationPortRange": "*",
+    //          "sourceAddressPrefix": "VirtualNetwork",
+    //          "destinationAddressPrefix": "*",
+    //          "access": "Deny",
+    //          "priority": 120,
+    //          "direction": "Inbound"
+    //        }
+    //      }
+    //    ]
+    //  }
+    //},
+    //{
+    //  "type": "Microsoft.Network/networkSecurityGroups",
+    //  "apiVersion": "2015-06-15",
+    //  "name": "[variables('dbSubnetNsg')]",
+    //  "location": "[parameters('resourceLocation')]",
+    //  "properties": {
+    //    "securityRules": [
+    //      {
+    //        "name": "Allow_FE_SQL",
+    //        "properties": {
+    //          "description": "Allow SQL Traffic from Front End Subnet",
+    //          "protocol": "Tcp",
+    //          "sourcePortRange": "*",
+    //          "destinationPortRange": "1433",
+    //          "sourceAddressPrefix": "[variables('frontEndSubnetPrefix')]",
+    //          "destinationAddressPrefix": "*",
+    //          "access": "Allow",
+    //          "priority": 100,
+    //          "direction": "Inbound"
+    //        }
+    //      },
+    //      {
+    //        "name": "ALLOW_ADMIN_SUBNET",
+    //        "properties": {
+    //          "description": "Allow all traffic from Admin subnet",
+    //          "protocol": "*",
+    //          "sourcePortRange": "*",
+    //          "destinationPortRange": "*",
+    //          "sourceAddressPrefix": "[variables('adminSubnetPrefix')]",
+    //          "destinationAddressPrefix": "*",
+    //          "access": "Allow",
+    //          "priority": 110,
+    //          "direction": "Inbound"
+    //        }
+    //      },
+    //      {
+    //        "name": "Block_VNET",
+    //        "properties": {
+    //          "description": "Block all traffic from VNET",
+    //          "protocol": "*",
+    //          "sourcePortRange": "*",
+    //          "destinationPortRange": "*",
+    //          "sourceAddressPrefix": "VirtualNetwork",
+    //          "destinationAddressPrefix": "*",
+    //          "access": "Deny",
+    //          "priority": 120,
+    //          "direction": "Inbound"
+    //        }
+    //      }
+    //    ]
+    //  }
+    //},
+    //{
+    //  "type": "Microsoft.Network/networkSecurityGroups",
+    //  "apiVersion": "2015-06-15",
+    //  "name": "[variables('dcSubnetNsg')]",
+    //  "location": "[parameters('resourceLocation')]",
+    //  "properties": {
+    //    "securityRules": [
+    //      {
+    //        "name": "Allow_RDP",
+    //        "properties": {
+    //          "description": "Allow RDP from Internet",
+    //          "protocol": "Tcp",
+    //          "sourcePortRange": "*",
+    //          "destinationPortRange": "3389",
+    //          "sourceAddressPrefix": "Internet",
+    //          "destinationAddressPrefix": "*",
+    //          "access": "Allow",
+    //          "priority": 100,
+    //          "direction": "Inbound"
+    //        }
+    //      },
+    //      {
+    //        "name": "Block_VNET",
+    //        "properties": {
+    //          "description": "Block all traffic from VNET",
+    //          "protocol": "*",
+    //          "sourcePortRange": "*",
+    //          "destinationPortRange": "*",
+    //          "sourceAddressPrefix": "VirtualNetwork",
+    //          "destinationAddressPrefix": "*",
+    //          "access": "Deny",
+    //          "priority": 120,
+    //          "direction": "Inbound"
+    //        }
+    //      }
+    //    ]
+    //  }
+    //},
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "name": "[variables('vnetName')]",
+      "location": "[parameters('resourceLocation')]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [
+        //"[resourceId('Microsoft.Network/networkSecurityGroups', variables('adminSubnetNsg'))]",
+        //"[resourceId('Microsoft.Network/networkSecurityGroups', variables('frontEndSubnetNsg'))]",
+        //"[resourceId('Microsoft.Network/networkSecurityGroups', variables('dbSubnetNsg'))]"
+      ],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[parameters('vnetAddressRange')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('dcSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('dcSubnetAddressRange')]"
+              //"networkSecurityGroup": {
+              //  "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('adminSubnetNsg'))]"
+              //}
+            }
+          },
+          {
+            "name": "[variables('feSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('feSubnetAddressRange')]"
+              //"networkSecurityGroup": {
+              //  "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('frontEndSubnetNsg'))]"
+              //}
+            }
+          },
+          {
+            "name": "[variables('dbSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('dbSubnetAddressRange')]"
+              //"networkSecurityGroup": {
+              //  "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('dbSubnetNsg'))]"
+              //}
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "vnetName": {
+      "type": "string",
+      "value": "[variables('vnetName')]"
+    },
+    "dcSubnetName": {
+      "type": "string",
+      "value": "[variables('dcSubnetName')]"
+    },
+    "feSubnetName": {
+      "type": "string",
+      "value": "[variables('feSubnetName')]"
+    },
+    "dbSubnetName": {
+      "type": "string",
+      "value": "[variables('dbSubnetName')]"
+    },
+    "vnetSettings": {
+      "type": "object",
+      "value": "[reference(variables('vnetName'))]"
+      }
+
+    }
+}

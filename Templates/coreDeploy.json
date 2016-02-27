@@ -1,0 +1,292 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "_artifactsLocation": {
+      "type": "string"
+    },
+    "_artifactsLocationSasToken": {
+      "type": "securestring"
+    },
+    "resourceLocation": {
+      "type": "string",
+      "allowedValues": [
+        "East US",
+        "East US 2",
+        "West US",
+        "Central US",
+        "South Central US",
+        "North Central US",
+        "North Europe",
+        "West Europe",
+        "Southeast Asia",
+        "East Asia",
+        "Japan West",
+        "Japan East",
+        "Brazil South",
+        "Australia East",
+        "Australia Southeast"
+      ],
+      "metadata": {
+        "description": "Azure region where all resources will be deployed. This is distinct from resource group location."
+      }
+    },
+    "appName": {
+      "type": "string",
+      "metadata": {
+        "description": "Application name used as a prefix for ARM resource"
+      },
+      "defaultValue": "invs"
+    },
+    "diagSaType": {
+      "type": "string",
+      "metadata": {
+        "description": "Diagnostics storage account type"
+      },
+      "defaultValue": "Standard_LRS"
+    },
+    "vmSaType": {
+      "type": "string",
+      "metadata": {
+        "description": "Virtual machine storage account type"
+      },
+      "defaultValue": "Standard_LRS"
+    },
+    "vnetAddressRange": {
+      "type": "string",
+      "metadata": {
+        "description": "The address range of the new VNET in CIDR format"
+      },
+      "defaultValue": "10.0.0.0/16"
+    },
+    "dcSubnetAddressRange": {
+      "type": "string",
+      "metadata": {
+        "description": "The address range of the Domain Controller subnet in the new VNET"
+      },
+      "defaultValue": "10.0.0.0/24"
+    },
+    "feSubnetAddressRange": {
+      "type": "string",
+      "metadata": {
+        "description": "The address range of the Front End subnet in the new VNET"
+      },
+      "defaultValue": "10.0.1.0/24"
+    },
+    "dbSubnetAddressRange": {
+      "type": "string",
+      "metadata": {
+        "description": "The address range of the Database subnet in the new VNET"
+      },
+      "defaultValue": "10.0.2.0/24"
+    },
+    "pdcName": {
+      "type": "string",
+      "metadata": {
+        "description": "The computer name of the Primary Domain Controller"
+      },
+      "defaultValue": "[concat(parameters('appName'),'-pdc')]"
+    },
+    "bdcName": {
+      "type": "string",
+      "metadata": {
+        "description": "The computer name of Backup Domain Controller"
+      },
+      "defaultValue": "[concat(parameters('appName'),'-bdc')]"
+    },
+    "domainAdminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the administrator of the new domain"
+      }
+    },
+    "domainAdminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The password for the administrator account of the new domain"
+      }
+    },
+    "dcSku": {
+      "type": "string",
+      "metadata": {
+        "description": "VM size of Domain Controllers."
+      },
+      "defaultValue": "Standard_A1"
+    },
+    "localAdminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "The name for the local machine administrator"
+      }
+    },
+    "localAdminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The password for the local machine administrator"
+      }
+    },
+    "domainName": {
+      "type": "string",
+      "metadata": {
+        "description": "The FQDN of the AD Domain created "
+      }
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "name": "storage",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [ ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/Investran/storage/storage.json', parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "resourceLocation": {
+            "value": "[parameters('resourceLocation')]"
+          },
+          "appName": {
+            "value": "[parameters('appName')]"
+          },
+          "vmSaType": {
+            "value": "[parameters('vmSaType')]"
+          },
+          "diagSaType": {
+            "value": "[parameters('diagSaType')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "vnet",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [ ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/Investran/vnet/vnet.json', parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "resourceLocation": {
+            "value": "[parameters('resourceLocation')]"
+          },
+          "appName": {
+            "value": "[parameters('appName')]"
+          },
+          "vnetAddressRange": {
+            "value": "[parameters('vnetAddressRange')]"
+          },
+          "dcSubnetAddressRange": {
+            "value": "[parameters('dcSubnetAddressRange')]"
+          },
+          "feSubnetAddressRange": {
+            "value": "[parameters('feSubnetAddressRange')]"
+          },
+          "dbSubnetAddressRange": {
+            "value": "[parameters('dbSubnetAddressRange')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "jumpbox",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [ ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/Investran/jumpbox/jumpbox.json', parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "resourceLocation": {
+            "value": "[parameters('resourceLocation')]"
+          },
+          "localAdminUsername": {
+            "value": "[parameters('localAdminUsername')]"
+          },
+          "localAdminPassword": {
+            "value": "[parameters('localAdminPassword')]"
+          },
+          "appName": {
+            "value": "[parameters('appName')]"
+          },
+          "vnetName": {
+            "value": "[reference('vnet').outputs.vnetName.value]"
+          },
+          "subnetName": {
+            "value": "[reference('vnet').outputs.dcSubnetName.value]"
+          },
+          "vmSaNames": {
+            "value": "[reference('storage').outputs.vmStorageAccountNames.value]"
+          },
+          "diagSaName": {
+            "value": "[reference('storage').outputs.diagStorageAccountName.value]"
+          },
+          "vnetResourceGroup": {
+            "value": "[resourceGroup().name]"
+          }
+        }
+      }
+    },
+    {
+      "name": "domainDeploy",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [ ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/Investran/domain/domainDeploy.json', parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
+          },
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
+          },
+          "resourceLocation": {
+            "value": "[parameters('resourceLocation')]"
+          },
+          "domainName": {
+            "value": "[parameters('domainName')]"
+          },
+          "domainAdminUsername": {
+            "value": "[parameters('domainAdminUsername')]"
+          },
+          "domainAdminPassword": {
+            "value": "[parameters('domainAdminPassword')]"
+          },
+          "appName": {
+            "value": "[parameters('appName')]"
+          },
+          "vnetName": {
+            "value": "[reference('vnet').outputs.vnetName.value]"
+          },
+          "subnetName": {
+            "value": "[reference('vnet').outputs.dcSubnetName.value]"
+          },
+          "vmSaNames": {
+            "value": "[reference('storage').outputs.vmStorageAccountNames.value]"
+          },
+          "diagSaName": {
+            "value": "[reference('storage').outputs.diagStorageAccountName.value]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+  }
+}

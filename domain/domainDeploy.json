@@ -1,0 +1,198 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "_artifactsLocation": {
+      "type": "string"
+    },
+    "_artifactsLocationSasToken": {
+      "type": "securestring"
+    },
+    "appName": {
+      "type": "string",
+      "metadata": {
+        "description": "Application name used as a prefix for ARM resources"
+      }
+    },
+    "resourceLocation": {
+      "type": "string",
+      "allowedValues": [
+        "East US",
+        "East US 2",
+        "West US",
+        "Central US",
+        "South Central US",
+        "North Central US",
+        "North Europe",
+        "West Europe",
+        "Southeast Asia",
+        "East Asia",
+        "Japan West",
+        "Japan East",
+        "Brazil South",
+        "Australia East",
+        "Australia Southeast"
+      ],
+      "metadata": {
+        "description": "Azure region where all resources will be deployed. This is distinct from resource group location."
+      }
+    },
+    "vnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the subnet where the Domain Controllers should be deployed"
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the subnet where the Domain Controllers should be deployed"
+      }
+    },
+    "vmSaNames": {
+      "type": "array",
+      "metadata": {
+        "description": "Array of existing storage account names to be used for VM's"
+      }
+    },
+    "diagSaName": {
+      "type": "string",
+      "metadata": {
+        "description": "Existing storage account names to be used for diagnostics"
+      }
+    },
+    "domainName": {
+      "type": "string",
+      "metadata": {
+        "description": "The FQDN of the AD Domain created "
+      }
+    },
+    "pdcName": {
+      "type": "string",
+      "metadata": {
+        "description": "The computer name of the Primary Domain Controller"
+      },
+      "defaultValue": "[concat(parameters('appName'),'-pdc')]"
+    },
+    "bdcName": {
+      "type": "string",
+      "metadata": {
+        "description": "The computer name of Backup Domain Controller"
+      },
+      "defaultValue": "[concat(parameters('appName'),'-bdc')]"
+    },
+    "pdcInternalIpAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The internal IP address of Primary Domain Controller"
+      },
+      "defaultValue": "10.0.0.100"
+    },
+    "bdcInternalIpAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The internal IP address of the Backup Domain Controller"
+      },
+      "defaultValue": "10.0.0.101"
+    },
+    "domainAdminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the administrator of the new domain"
+      }
+    },
+    "domainAdminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The password for the administrator account of the new domain"
+      }
+    },
+    "dcSku": {
+      "type": "string",
+      "metadata": {
+        "description": "VM size of Domain Controllers."
+      },
+      "defaultValue": "Standard_A1"
+    }
+   },
+  "variables": {
+  },
+  "resources": [
+    {
+      "name": "lookupVnet",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [ ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/Investran/domain/lookupVnet.json', parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vnetName": {
+            "value": "[parameters('vnetName')]"
+          },
+
+          "vnetResGroup": {
+            "value": "[resourceGroup().name]"
+          }
+        }
+      }
+    },
+    {
+      "name": "domain",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [ ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('_artifactsLocation'), '/Investran/domain/domain.json', parameters('_artifactsLocationSasToken'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
+          },
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
+          },
+          "appName": {
+            "value": "[parameters('appName')]"
+          },
+          "resourceLocation": {
+            "value": "[parameters('resourceLocation')]"
+          },
+
+          "vnet": {
+            "value": "[reference('lookupVnet').outputs.vnet.value]"
+          },
+          "vnetName": {
+            "value": "[parameters('vnetName')]"
+          },
+          "subnetName": {
+            "value": "[parameters('subnetName')]"
+          },
+          "vmSaNames": {
+            "value": "[parameters('vmSaNames')]"
+          },
+          "diagSaName": {
+            "value": "[parameters('diagSaName')]"
+          },
+          "domainName": {
+            "value": "[parameters('domainName')]"
+          },
+          "domainAdminUsername": {
+            "value": "[parameters('domainAdminUsername')]"
+          },
+          "domainAdminPassword": {
+            "value": "[parameters('domainAdminPassword')]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+  }
+}

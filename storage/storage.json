@@ -1,0 +1,96 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "resourceLocation": {
+      "type": "string",
+      "allowedValues": [
+        "East US",
+        "East US 2",
+        "West US",
+        "Central US",
+        "South Central US",
+        "North Central US",
+        "North Europe",
+        "West Europe",
+        "Southeast Asia",
+        "East Asia",
+        "Japan West",
+        "Japan East",
+        "Brazil South",
+        "Australia East",
+        "Australia Southeast"
+      ],
+      "metadata": {
+        "description": "Azure region where all resources will be deployed. This is distinct from resource group location."
+      }
+    },
+    "appName": {
+      "type": "string",
+      "metadata": {
+        "description": "Application name used as a prefix for ARM resources"
+      }
+    },
+    "diagSaType": {
+      "type": "string",
+      "metadata": {
+        "description": "Diagnostics storage account type"
+      },
+      "defaultValue": "Standard_LRS"
+    },
+    "vmSaType": {
+      "type": "string",
+      "metadata": {
+        "description": "Virtual machine storage account type"
+      },
+      "defaultValue": "Standard_LRS"
+    }
+  },
+  "variables": {
+    "diagSaName": "[concat(parameters('appName'),'diagsa')]",
+    "vmSaCount": 5,
+    "vmSaSuffix": "[concat(parameters('appName'),'vmsa')]",
+    "vmSaNames": [
+      "[concat(uniqueString(concat(resourceGroup().id, variables('vmSaSuffix'), '0')), variables('vmSaSuffix'), '0')]",
+      "[concat(uniqueString(concat(resourceGroup().id, variables('vmSaSuffix'), '1')), variables('vmSaSuffix'), '1')]",
+      "[concat(uniqueString(concat(resourceGroup().id, variables('vmSaSuffix'), '2')), variables('vmSaSuffix'), '2')]",
+      "[concat(uniqueString(concat(resourceGroup().id, variables('vmSaSuffix'), '3')), variables('vmSaSuffix'), '3')]",
+      "[concat(uniqueString(concat(resourceGroup().id, variables('vmSaSuffix'), '4')), variables('vmSaSuffix'), '4')]"
+    ]
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('diagSaName')]",
+      "location": "[parameters('resourceLocation')]",
+      "apiVersion": "2015-06-15",
+      "properties": {
+        "accountType": "[parameters('diagSaType')]"
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('vmSaNames')[copyIndex()]]",
+      "location": "[parameters('resourceLocation')]",
+      "apiVersion": "2015-06-15",
+      "copy": {
+        "name": "storageLoop",
+        "count": "[variables('vmSaCount')]"
+      },
+      "properties": {
+        "accountType": "[parameters('vmSaType')]"
+      }
+    }
+
+  ],
+  "outputs": {
+    "vmStorageAccountNames": {
+      "type": "array",
+      "value": "[variables('vmSaNames')]"
+    },
+    "diagStorageAccountName": {
+      "type": "string",
+      "value": "[variables('diagSaName')]"
+    }
+  }
+} 
