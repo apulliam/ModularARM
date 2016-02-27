@@ -1,27 +1,33 @@
 ﻿{
-  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "resourceLocation": {
-      "value": "East US"
-    },
-    "localAdminUsername": {
-      "value": "testme"
-    },
-    "localAdminPassword": {
-      "value": "test@me1"
-    },
-    "appName": {
-      "value": "test"
-    },
-    "domainAdminUsername": {
-      "value": "testme"
-    },
-    "domainAdminPassword": {
-      "value": "test@me1"
-    },
-      "domainName": {
-          "value": "test.com"
-      }
-  }
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "_artifactsLocation": {
+            "value": "https://raw.githubusercontent.com/apulliam/ModularARM/master"
+        },
+        "_artifactsLocationSasToken": {
+            "value": ""
+        },
+        "resourceLocation": {
+            "value": "East US"
+        },
+        "localAdminUsername": {
+            "value": "testme"
+        },
+        "localAdminPassword": {
+            "value": "test@me1"
+        },
+        "appName": {
+            "value": "test"
+        },
+        "domainAdminUsername": {
+            "value": "testme"
+        },
+        "domainAdminPassword": {
+            "value": "test@me1"
+        },
+        "domainName": {
+            "value": "test.com"
+        }
+    }
 }

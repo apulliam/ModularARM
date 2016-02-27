@@ -133,10 +133,14 @@
     }
   },
   "variables": {
+      "storageDeploymentName":"[concat(deployment().name,'-storage')]",
+      "vnetDeploymentName":"[concat(deployment().name,'-vnet')]",
+      "jumpboxDeploymentName" :"[concat(deployment().name,'-jumpbox')]",
+      "domainDeploymentName" :"[concat(deployment().name,'-domainDeploy')]"
   },
   "resources": [
     {
-      "name": "storage",
+      "name": "[variables('storageDeploymentName')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [ ],
@@ -163,7 +167,7 @@
       }
     },
     {
-      "name": "vnet",
+      "name": "[variables('vnetDeploymentName')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [ ],
@@ -196,7 +200,7 @@
       }
     },
     {
-      "name": "jumpbox",
+      "name": "[variables('jumpboxDeploymentName')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [ ],
@@ -220,16 +224,16 @@
             "value": "[parameters('appName')]"
           },
           "vnetName": {
-            "value": "[reference('vnet').outputs.vnetName.value]"
+            "value": "[reference(variables('vnetDeploymentName')).outputs.vnetName.value]"
           },
           "subnetName": {
-            "value": "[reference('vnet').outputs.dcSubnetName.value]"
+            "value": "[reference(variables('vnetDeploymentName')).outputs.dcSubnetName.value]"
           },
           "vmSaNames": {
-            "value": "[reference('storage').outputs.vmStorageAccountNames.value]"
+            "value": "[reference(variables('storageDeploymentName')).outputs.vmStorageAccountNames.value]"
           },
           "diagSaName": {
-            "value": "[reference('storage').outputs.diagStorageAccountName.value]"
+            "value": "[reference(variables('storageDeploymentName')).outputs.diagStorageAccountName.value]"
           },
           "vnetResourceGroup": {
             "value": "[resourceGroup().name]"
@@ -238,7 +242,7 @@
       }
     },
     {
-      "name": "domainDeploy",
+      "name": "[variables('domainDeploymentName')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [ ],
@@ -272,16 +276,16 @@
             "value": "[parameters('appName')]"
           },
           "vnetName": {
-            "value": "[reference('vnet').outputs.vnetName.value]"
+            "value": "[reference(variables('vnetDeploymentName')).outputs.vnetName.value]"
           },
           "subnetName": {
-            "value": "[reference('vnet').outputs.dcSubnetName.value]"
+            "value": "[reference(variables('vnetDeploymentName')).outputs.dcSubnetName.value]"
           },
           "vmSaNames": {
-            "value": "[reference('storage').outputs.vmStorageAccountNames.value]"
+            "value": "[reference(variables('storageDeploymentName')).outputs.vmStorageAccountNames.value]"
           },
           "diagSaName": {
-            "value": "[reference('storage').outputs.diagStorageAccountName.value]"
+            "value": "[reference(variables('storageDeploymentName')).outputs.diagStorageAccountName.value]"
           }
         }
       }

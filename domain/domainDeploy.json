@@ -116,10 +116,12 @@
     }
    },
   "variables": {
+      "lookupVnetDeploymentName":"[concat(deployment().name,'-lookupVnet')]",
+      "domainDeploymentName":"[concat(deployment().name,'-domain')]"
   },
   "resources": [
     {
-      "name": "lookupVnet",
+      "name": "[variables('lookupVnetDeploymentName')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [ ],
@@ -141,7 +143,7 @@
       }
     },
     {
-      "name": "domain",
+      "name": "[variables('domainDeploymentName')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [ ],
