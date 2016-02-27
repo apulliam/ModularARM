@@ -1,42 +1,51 @@
 ﻿{
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
-  "parameters": {
-    "appName": {
-      "value": "test"
-    },
-    "vnetResourceGroup": {
-      "value": "apulliam-invs-core"
-    },
-    "vnetName": {
-      "value": "test-vnet"
-    },
-    "subnetName": {
-      "value": "test-fe"
-    },
-    "vmSaNames": {
-      "value": [ "aeoilizsox3fetestvmsa0", "265gjegpvix22testvmsa1", "ole6gm5r2rezatestvmsa2", "2ufjxozj22dsktestvmsa3", "pbdrdkum6z6zktestvmsa4" ]
-    },
-    "diagSaName": {
-      "value": "testdiagsa"
-    },
-    "domainName": {
-      "value": "apulliam"
-    },
-    "localAdminPassword": {
-      "value": "n7923n@ryy"
-    },
-    "localAdminUsername": {
-      "value": "apulliam"
-    },
-    "resourceLocation": {
-      "value": "East US"
-    },
-      "domainJoinUsername": {
-          "value": "apulliam"
-      },
-      "domainJoinPassword": {
-          "value": "n7923n@ryy"
-      }
-  }
+    "parameters": {
+        "appName": {
+            "value": "test"
+        },
+        "azureDnsName": {
+            "value": "test789"
+        },
+        "vnetResourceGroup": {
+            "value": "apulliam-test"
+        },
+        "vnetName": {
+            "value": "test-vnet"
+        },
+        "subnetName": {
+            "value": "test-fe"
+        },
+        "vmSaNames": {
+            "value": [
+                "56lhhyxcsjjlwtestvmsa0",
+                "kbi2ky5ajk5iqtestvmsa1",
+                "4sgfltplrof6stestvmsa2",
+                "tnzz7makxaczitestvmsa3",
+                "bpbmzdd42qisetestvmsa4"
+            ]
+        },
+        "diagSaName": {
+            "value": "testdiagsa"
+        },
+        "domainName": {
+            "value": "test"
+        },
+        "localAdminPassword": {
+            "value": "test@me1"
+        },
+        "localAdminUsername": {
+            "value": "testme"
+        },
+        "resourceLocation": {
+            "value": "East US"
+        },
+        "domainJoinUsername": {
+            "value": "testme"
+        },
+        "domainJoinPassword": {
+            "value": "test@me1"
+        }
+    }
 }

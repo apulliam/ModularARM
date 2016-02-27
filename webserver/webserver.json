@@ -1,268 +1,280 @@
 ﻿{
-  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "appName": {
-      "type": "string",
-      "metadata": {
-        "description": "Application name used as a prefix for ARM resources"
-      },
-      "defaultValue": "invs"
-    },
-    "resourceLocation": {
-      "type": "string",
-      "allowedValues": [
-        "East US",
-        "East US 2",
-        "West US",
-        "Central US",
-        "South Central US",
-        "North Central US",
-        "North Europe",
-        "West Europe",
-        "Southeast Asia",
-        "East Asia",
-        "Japan West",
-        "Japan East",
-        "Brazil South",
-        "Australia East",
-        "Australia Southeast"
-      ],
-      "metadata": {
-        "description": "Azure region where all resources will be deployed. This is distinct from resource group location."
-      }
-    },
-    "vnetResourceGroup": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of Resource Group where the VNET is deployed"
-      }
-    },
-    "vnetName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of an existing VNET where the web servers should be deployed"
-      }
-    },
-    "subnetName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the subnet where the jumpbox should be deployed"
-      }
-    },
-    "localAdminPassword": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Local Administrator password on all Front End VMs."
-      }
-    },
-    "localAdminUsername": {
-      "type": "string",
-      "metadata": {
-        "description": "Local Administrator username on all Front End VMs."
-      }
-    },
-    "webServerSku": {
-      "type": "string",
-      "defaultValue": "Standard_A1",
-      "metadata": {
-        "description": "Size of VMs in the web server Scale Set."
-      }
-    },
-    "webServerCount": {
-      "type": "int",
-      "metadata": {
-        "description": "Number of web server VM instances (100 or less)."
-      },
-      "defaultValue": 2,
-      "maxValue": 100
-    },
-    "domainName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the domain to join"
-      }
-    },
-    "domainJoinUsername": {
-      "type": "string",
-      "metadata": {
-        "description": "The username of the user authorized to join machine to the domain"
-      }
-    },
-    "domainJoinPassword": {
-      "type": "securestring",
-      "metadata": {
-        "description": "The password of the user authorized to join machine to the domain"
-      }
-    },
-    "vmSaNames": {
-      "type": "array",
-      "metadata": {
-        "description": "Array of existing storage account names to be used for VM's"
-      }
-    },
-    "diagSaName": {
-      "type": "string",
-      "metadata": {
-        "description": "Existing storage account names to be used for diagnostics"
-      }
-    }
-  },
-  "variables": {
-    "vnetID": "[resourceId(parameters('vnetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
-    "webServerName": "[concat(parameters('appName'),'-web')]",
-    "webServerLoadBalancerName": "[concat(variables('webServerName'), '-lb')]",
-    "webServerLoadBalancerBackend": "[concat(variables('webServerLoadBalancerName'), '-backend')]",
-    "webServerOsDiskName": "[concat(variables('webServerName'), '-osdisk')]",
-    "webServerPublicIAddressName": "[concat(variables('webServerName'), '-pip')]",
-    "vhdContainerName": "[concat(variables('webServerName'), '-vhd')]",
-    "osType": {
-      "publisher": "MicrosoftWindowsServer",
-      "offer": "WindowsServer",
-      "sku": "2012-R2-Datacenter",
-      "version": "latest"
-    },
-    "domainAndUsername": [ "concat(parameters('domainToJoin')", "\\", "parameters('domainJoinUsername'))" ],
-    "ouPath": "",
-    "domainJoinOptions": 3
-   
-  },
-  "resources": [
-    {
-      "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[variables('webServerPublicIAddressName')]",
-      "location": "[parameters('resourceLocation')]",
-      "apiVersion": "2015-06-15",
-      "properties": {
-        "publicIPAllocationMethod": "Dynamic",
-        "dnsSettings": {
-          "domainNameLabel": "[variables('webServerName')]"
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Network/loadBalancers",
-      "name": "[variables('webServerLoadBalancerName')]",
-      "location": "[parameters('resourceLocation')]",
-      "apiVersion": "2015-06-15",
-      "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('webServerPublicIAddressName'))]"
-      ],
-      "properties": {
-        "frontendIPConfigurations": [
-          {
-            "name": "[concat(variables('webServerLoadBalancerName'), '-frontend')]",
-            "properties": {
-              "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses/',variables('webServerPublicIAddressName'))]"
-              }
-            }
-          }
-        ],
-        "backendAddressPools": [
-          {
-            "name": "[variables('webServerLoadBalancerBackend')]"
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Compute/virtualMachineScaleSets",
-      "name": "[variables('webServerName')]",
-      "location": "[parameters('resourceLocation')]",
-      "apiVersion": "2015-06-15",
-      "tags": {
-        "displayName": "VMScaleSet"
-      },
-      "dependsOn": [
-        //"storageLoop",
-        "[concat('Microsoft.Network/loadBalancers/', variables('webServerLoadBalancerName'))]"
-        //"[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
-      ],
-      "sku": {
-        "name": "[parameters('webServerSku')]",
-        "tier": "Standard",
-        "capacity": "[parameters('webServerCount')]"
-      },
-      "properties": {
-        "upgradePolicy": {
-          "mode": "Manual"
-        },
-        "virtualMachineProfile": {
-          "storageProfile": {
-            "osDisk": {
-              "vhdContainers": [
-                "[concat('https://', parameters('vmSaNames')[0], '.blob.core.windows.net/', variables('vhdContainerName'))]",
-                "[concat('https://', parameters('vmSaNames')[1], '.blob.core.windows.net/', variables('vhdContainerName'))]",
-                "[concat('https://', parameters('vmSaNames')[2], '.blob.core.windows.net/', variables('vhdContainerName'))]",
-                "[concat('https://', parameters('vmSaNames')[3], '.blob.core.windows.net/', variables('vhdContainerName'))]",
-                "[concat('https://', parameters('vmSaNames')[4], '.blob.core.windows.net/', variables('vhdContainerName'))]"
-              ],
-              "name": "[variables('webServerOsDiskName')]",
-              "caching": "ReadOnly",
-              "createOption": "FromImage"
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appName": {
+            "type": "string",
+            "metadata": {
+                "description": "Application name used as a prefix for ARM resources"
             },
-            "imageReference": "[variables('osType')]"
-          },
-          "osProfile": {
-            "computerNamePrefix": "[variables('webServerName')]",
-            "adminUsername": "[parameters('localAdminUsername')]",
-            "adminPassword": "[parameters('localAdminPassword')]"
-          },
-          "networkProfile": {
-            "networkInterfaceConfigurations": [
-              {
-                "name": "[concat(variables('webServerName'), '-nic')]",
-                "properties": {
-                  "primary": true,
-                  "ipConfigurations": [
-                    {
-                      "name": "[concat(variables('webServerName'), '-ipconfig')]",
-                      "properties": {
-                        "subnet": {
-                          "id": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]"
-
-                        },
-                        "loadBalancerBackendAddressPools": [
-                          {
-                            "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('webServerLoadBalancerName')), '/backendAddressPools/', variables('webServerLoadBalancerBackend'))]"
-                          }
-                        ]
-                    
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          "extensionProfile": {
-            "extensions": [
-              {
-                "name": "joindomain",
-                "properties": {
-                  "publisher": "Microsoft.Compute",
-                  "type": "JsonADDomainExtension",
-                  "typeHandlerVersion": "1.0",
-                  "settings": {
-                    "Name": "[parameters('domainName')]",
-                    "OUPath": "[variables('ouPath')]",
-                    "User": "[variables('domainAndUsername')]",
-
-                    "Restart": "true",
-                    "Options": "[variables('domainJoinOptions')]"
-                  },
-                  "protectedsettings": {
-                    "Password": "[parameters('domainJoinPassword')]"
-                  }
-                }
-              }
-            ]
-          }
+            "defaultValue": "invs"
+        },
+        "resourceLocation": {
+            "type": "string",
+            "allowedValues": [
+                "East US",
+                "East US 2",
+                "West US",
+                "Central US",
+                "South Central US",
+                "North Central US",
+                "North Europe",
+                "West Europe",
+                "Southeast Asia",
+                "East Asia",
+                "Japan West",
+                "Japan East",
+                "Brazil South",
+                "Australia East",
+                "Australia Southeast"
+            ],
+            "metadata": {
+                "description": "Azure region where all resources will be deployed. This is distinct from resource group location."
+            }
+        },
+        "vnetResourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of Resource Group where the VNET is deployed"
+            }
+        },
+        "vnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of an existing VNET where the web servers should be deployed"
+            }
+        },
+        "subnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the subnet where the jumpbox should be deployed"
+            }
+        },
+        "localAdminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Local Administrator password on all Front End VMs."
+            }
+        },
+        "localAdminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Local Administrator username on all Front End VMs."
+            }
+        },
+         "azureDnsName": {
+            "type": "string",
+            "defaultValue": "[concat(parameters('appName'),'-web')]",
+            "metadata": {
+                "description": "Azure DNS name for public endpoint"
+            }
+        },
+        "webServerName": {
+            "type": "string",
+            "defaultValue": "[concat(parameters('appName'),'-web')]",
+            "metadata": {
+                "description": "Base name of VMs in the web server Scale Set."
+            }
+        },
+        "webServerSku": {
+            "type": "string",
+            "defaultValue": "Standard_A1",
+            "metadata": {
+                "description": "Size of VMs in the web server Scale Set."
+            }
+        },
+        "webServerCount": {
+            "type": "int",
+            "metadata": {
+                "description": "Number of web server VM instances (100 or less)."
+            },
+            "defaultValue": 2,
+            "maxValue": 100
+        },
+        "domainName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the domain to join"
+            }
+        },
+        "domainJoinUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "The username of the user authorized to join machine to the domain"
+            }
+        },
+        "domainJoinPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The password of the user authorized to join machine to the domain"
+            }
+        },
+        "vmSaNames": {
+            "type": "array",
+            "metadata": {
+                "description": "Array of existing storage account names to be used for VM's"
+            }
+        },
+        "diagSaName": {
+            "type": "string",
+            "metadata": {
+                "description": "Existing storage account names to be used for diagnostics"
+            }
         }
-      }
-    }
-  ],
-  "outputs": {
-  }
+    },
+    "variables": {
+        "vnetID": "[resourceId(parameters('vnetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
+        "webServerLoadBalancerName": "[concat(parameters('webServerName'), '-lb')]",
+        "webServerLoadBalancerBackend": "[concat(variables('webServerLoadBalancerName'), '-backend')]",
+        "webServerOsDiskName": "[concat(parameters('webServerName'), '-osdisk')]",
+        "webServerPublicIAddressName": "[concat(parameters('webServerName'), '-pip')]",
+        "vhdContainerName": "[concat(parameters('webServerName'), '-vhd')]",
+        "osType": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2012-R2-Datacenter",
+            "version": "latest"
+        },
+        "domainAndUsername": [
+            "concat(parameters('domainToJoin')",
+            "\\",
+            "parameters('domainJoinUsername'))"
+        ],
+        "ouPath": "",
+        "domainJoinOptions": 3
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('webServerPublicIAddressName')]",
+            "location": "[parameters('resourceLocation')]",
+            "apiVersion": "2015-06-15",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "dnsSettings": {
+                    "domainNameLabel": "[parameters('azureDnsName')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/loadBalancers",
+            "name": "[variables('webServerLoadBalancerName')]",
+            "location": "[parameters('resourceLocation')]",
+            "apiVersion": "2015-06-15",
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', variables('webServerPublicIAddressName'))]"
+            ],
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "[concat(variables('webServerLoadBalancerName'), '-frontend')]",
+                        "properties": {
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses/',variables('webServerPublicIAddressName'))]"
+                            }
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "[variables('webServerLoadBalancerBackend')]"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "name": "[parameters('webServerName')]",
+            "location": "[parameters('resourceLocation')]",
+            "apiVersion": "2015-06-15",
+            "tags": {
+                "displayName": "VMScaleSet"
+            },
+            "dependsOn": [
+                //"storageLoop",
+                "[concat('Microsoft.Network/loadBalancers/', variables('webServerLoadBalancerName'))]"
+                //"[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
+            ],
+            "sku": {
+                "name": "[parameters('webServerSku')]",
+                "tier": "Standard",
+                "capacity": "[parameters('webServerCount')]"
+            },
+            "properties": {
+                "upgradePolicy": {
+                    "mode": "Manual"
+                },
+                "virtualMachineProfile": {
+                    "storageProfile": {
+                        "osDisk": {
+                            "vhdContainers": [
+                                "[concat('https://', parameters('vmSaNames')[0], '.blob.core.windows.net/', variables('vhdContainerName'))]",
+                                "[concat('https://', parameters('vmSaNames')[1], '.blob.core.windows.net/', variables('vhdContainerName'))]",
+                                "[concat('https://', parameters('vmSaNames')[2], '.blob.core.windows.net/', variables('vhdContainerName'))]",
+                                "[concat('https://', parameters('vmSaNames')[3], '.blob.core.windows.net/', variables('vhdContainerName'))]",
+                                "[concat('https://', parameters('vmSaNames')[4], '.blob.core.windows.net/', variables('vhdContainerName'))]"
+                            ],
+                            "name": "[variables('webServerOsDiskName')]",
+                            "caching": "ReadOnly",
+                            "createOption": "FromImage"
+                        },
+                        "imageReference": "[variables('osType')]"
+                    },
+                    "osProfile": {
+                        "computerNamePrefix": "[parameters('webServerName')]",
+                        "adminUsername": "[parameters('localAdminUsername')]",
+                        "adminPassword": "[parameters('localAdminPassword')]"
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "[concat(parameters('webServerName'), '-nic')]",
+                                "properties": {
+                                    "primary": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "[concat(parameters('webServerName'), '-ipconfig')]",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]"
+                                                },
+                                                "loadBalancerBackendAddressPools": [
+                                                    {
+                                                        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', variables('webServerLoadBalancerName')), '/backendAddressPools/', variables('webServerLoadBalancerBackend'))]"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    "extensionProfile": {
+                        "extensions": [
+                            {
+                                "name": "joindomain",
+                                "properties": {
+                                    "publisher": "Microsoft.Compute",
+                                    "type": "JsonADDomainExtension",
+                                    "typeHandlerVersion": "1.0",
+                                    "settings": {
+                                        "Name": "[parameters('domainName')]",
+                                        "OUPath": "[variables('ouPath')]",
+                                        "User": "[variables('domainAndUsername')]",
+                                        "Restart": "true",
+                                        "Options": "[variables('domainJoinOptions')]"
+                                    },
+                                    "protectedsettings": {
+                                        "Password": "[parameters('domainJoinPassword')]"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {}
 }

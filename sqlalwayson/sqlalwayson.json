@@ -138,23 +138,21 @@
             "type": "string",
             "metadata": {
                 "description": "The computer name of the Primary Domain Controller"
-            },
-            "defaultValue": "[concat(parameters('deploymentPrefix'),'-pdc')]"
+            }
         },
-      
         "sqlVMName": {
             "type": "string",
             "metadata": {
                 "description": "The prefix used for naming SQL Server instances"
             },
-            "defaultValue": "sqlserver-"
+            "defaultValue": "[concat(parameters('appName'),'-sql')]"
         },
         "sqlwVMName": {
             "type": "string",
             "metadata": {
                 "description": "The computer name of the SQL Server witness"
             },
-            "defaultValue": "cluster-fsw"
+            "defaultValue": "[concat(parameters('appName'),'-fsw')]"
         },
         "coreResourceGroup": {
             "type": "string",
@@ -165,28 +163,24 @@
     },
     "variables": {
         "vnetID": "[resourceId(parameters('vnetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
-  
+        "sqlAvailabilitySetName": "[concat(parameters('appName'), '-sql-as')]",
+        "sqlLBName": "sqlLoadBalancer",
+        "webServerName": "[concat(parameters('appName'),'-web')]",
+        "webServerLoadBalancerName": "[concat(variables('webServerName'), '-lb')]",
+        "sqlAOEPName": "[concat(parameters('deploymentPrefix'),'-hadr')]",
+        "sharePath": "[concat(parameters('deploymentPrefix'),'-fsw')]",
+        "clusterName": "[concat(parameters('deploymentPrefix'),'-fc')]",
+        "sqlwNicName": "[concat(parameters('sqlwVMName'),'-nic')]",
         "sqlLBFE": "sqlLBFE",
         "sqlLBBE": "sqlLBBE",
-        "sqlLBName": "sqlLoadBalancer",
         "sqllbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbSettings').sqlLBName)]",
-      
         "SQLAOProbe": "SQLAlwaysOnEndPointProbe",
-        "sqlAvailabilitySetName": "sqlAvailabilitySet",
-      
         "windowsImagePublisher": "MicrosoftWindowsServer",
         "windowsImageOffer": "WindowsServer",
         "windowsImageSKU": "2012-R2-Datacenter",
         "sqlImagePublisher": "MicrosoftSQLServer",
         "sqlImageOffer": "[parameters('sqlServerVersion')]",
         "sqlImageSku": "Enterprise",
-      
-       
-        "sqlAOEPName": "[concat(parameters('deploymentPrefix'),'-hadr')]",
-        "sharePath": "[concat(parameters('deploymentPrefix'),'-fsw')]",
-        "clusterName": "[concat(parameters('deploymentPrefix'),'-fc')]",
-        "sqlwNicName": "[concat(parameters('sqlwVMName'),'-nic')]",
- 
         "staticSubnetRef": "[concat(variables('VnetID'),'/subnets/',variables('staticSubnetName'))]",
         "sqlSubnetRef": "[concat(variables('VnetID'),'/subnets/',variables('sqlSubnetName'))]",
         "sqlBEAddressPoolID": "[concat(variables('sqllbID'),'/backendAddressPools/',variables('sqlLBBE'))]",
@@ -278,9 +272,7 @@
             "apiVersion": "2015-06-15",
             "name": "[variables('sqlLBName')]",
             "type": "Microsoft.Network/loadBalancers",
-             "dependsOn": [
-                
-            ],
+            "dependsOn": [],
             "location": "[parameters('location')]",
             "properties": {
                 "frontendIPConfigurations": [
@@ -333,9 +325,7 @@
         {
             "name": "[concat(parameters('sqlVMName'), copyindex(),'-nic')]",
             "type": "Microsoft.Network/networkInterfaces",
-             "dependsOn": [
-                
-            ],
+            "dependsOn": [],
             "location": "[parameters('location')]",
             "apiVersion": "2015-06-15",
             "copy": {
@@ -364,9 +354,7 @@
         {
             "name": "[variables('sqlwNicName')]",
             "type": "Microsoft.Network/networkInterfaces",
-             "dependsOn": [
-                
-            ],
+            "dependsOn": [],
             "location": "[parameters('location')]",
             "apiVersion": "2015-06-15",
             "properties": {
@@ -386,8 +374,8 @@
         {
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Compute/virtualMachines",
-             "dependsOn": [
-                 "[concat('Microsoft.Network/networkInterfaces/', parameters('sqlVMName'), copyindex(),'-nic')]"
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', parameters('sqlVMName'), copyindex(),'-nic')]"
             ],
             "name": "[concat(parameters('sqlVMName'), copyindex())]",
             "location": "[parameters('location')]",
@@ -442,7 +430,7 @@
         {
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Compute/virtualMachines",
-             "dependsOn": [
+            "dependsOn": [
                 "[concat('Microsoft.Network/networkInterfaces/', variables('sqlwNicName'))]"
             ],
             "name": "[parameters('sqlwVMName')]",
@@ -512,7 +500,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('templatesBaseUrl'),'/preparingSqlServer.json')]",
+                    "uri": "[concat(variables('templatesBaseUrl'),'/sqlalwayson/preparingSqlServer.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -613,7 +601,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('templatesBaseUrl'),'/configuringAlwaysOn.json')]",
+                    "uri": "[concat(variables('templatesBaseUrl'),'/sqlalwayson/configuringAlwaysOn.json')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {

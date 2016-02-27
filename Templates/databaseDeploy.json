@@ -101,6 +101,8 @@
             "[concat(uniqueString(concat(variables('storageResourceId'), variables('vmSaSuffix'), '4')), variables('vmSaSuffix'), '4')]"
         ]
     },
-    "resources": [],
+    "resources": [
+        
+    ],
     "outputs": {}
 }
