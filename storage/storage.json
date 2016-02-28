@@ -47,7 +47,7 @@
     }
   },
   "variables": {
-    "diagSaName": "[concat(uniqueString(resourceGroup().id),parameters('appName'),'diagsa'))]",
+    "diagSaName": "[concat(uniqueString(resourceGroup().id),parameters('appName'),'diagsa')]",
     "vmSaCount": 5,
     "vmSaSuffix": "[concat(parameters('appName'),'vmsa')]",
     "vmSaNames": [
