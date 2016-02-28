@@ -286,6 +286,9 @@
           },
           "diagSaName": {
             "value": "[reference(variables('storageDeploymentName')).outputs.diagStorageAccountName.value]"
+          },
+           "vnetResourceGroup": {
+            "value": "[resourceGroup().name]"
           }
         }
       }
