@@ -463,10 +463,10 @@
         {
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Compute/virtualMachines",
-            "dependsOn": [
-                "[concat('Microsoft.Network/networkInterfaces/', parameters('sqlVMName'), add(copyindex(),1),'-nic')]",
-                "[concat('Microsoft.Compute/availabilitySets/',variables('sqlAvailabilitySetName'))]"
-            ],
+          "dependsOn": [
+            "sqlnicLoop",
+            "[concat('Microsoft.Compute/availabilitySets/',variables('sqlAvailabilitySetName'))]"
+          ],
             "name": "[concat(parameters('sqlVMName'), add(copyindex(),1))]",
             "location": "[parameters('location')]",
             "copy": {
