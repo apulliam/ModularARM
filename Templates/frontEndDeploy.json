@@ -32,6 +32,12 @@
                 "description": "Azure region where all resources will be deployed. This is distinct from resource group location."
             }
         },
+        "vnetResourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of Resource Group where the VNET is deployed"
+            }
+        },
         "vnetName": {
             "type": "string",
             "metadata": {
@@ -102,27 +108,37 @@
             "metadata": {
                 "description": "The password of the user authorized to join machine to the domain"
             }
-        },
-        "coreResourceGroup": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of core Resource Group where the storage accounts and vnet are located."
-            }
         }
     },
-    "variables": {
-        "diagSaName": "[concat(parameters('appName'),'diagsa')]",
-        "storageResourceId": "[concat(subscription().id, '/resourceGroups/', parameters('coreResourceGroup'))]",
-        "vmSaSuffix": "[concat(parameters('appName'),'vmsa')]",
-        "vmSaNames": [
-            "[concat(uniqueString(concat(variables('storageResourceId'), variables('vmSaSuffix'), '0')), variables('vmSaSuffix'), '0')]",
-            "[concat(uniqueString(concat(variables('storageResourceId'), variables('vmSaSuffix'), '1')), variables('vmSaSuffix'), '1')]",
-            "[concat(uniqueString(concat(variables('storageResourceId'), variables('vmSaSuffix'), '2')), variables('vmSaSuffix'), '2')]",
-            "[concat(uniqueString(concat(variables('storageResourceId'), variables('vmSaSuffix'), '3')), variables('vmSaSuffix'), '3')]",
-            "[concat(uniqueString(concat(variables('storageResourceId'), variables('vmSaSuffix'), '4')), variables('vmSaSuffix'), '4')]"
-        ]
-    },
+    "variables": {},
     "resources": [
+              {
+            "name": "[variables('storageDeploymentName')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/storage/storage.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "resourceLocation": {
+                        "value": "[parameters('resourceLocation')]"
+                    },
+                    "appName": {
+                        "value": "[parameters('appName')]"
+                    },
+                    "vmSaType": {
+                        "value": "[parameters('vmSaType')]"
+                    },
+                    "diagSaType": {
+                        "value": "[parameters('diagSaType')]"
+                    }
+                }
+            }
+        },
         {
             "name": "webserver",
             "type": "Microsoft.Resources/deployments",
@@ -142,7 +158,7 @@
                         "value": "[parameters('resourceLocation')]"
                     },
                     "vnetResourceGroup": {
-                        "value": "[parameters('coreResourceGroup')]"
+                        "value": "[parameters('vnetResourceGroup')]"
                     },
                     "vnetName": {
                         "value": "[parameters('vnetName')]"

@@ -38,6 +38,12 @@
                 "description": "Azure region where all resources will be deployed. This is distinct from resource group location."
             }
         },
+        "vnetResourceGroup": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of Resource Group where the VNET is deployed"
+            }
+        },
         "vnetName": {
             "type": "string",
             "metadata": {
@@ -68,38 +74,174 @@
                 "description": "The name of the domain to join"
             }
         },
-        "domainJoinUsername": {
+        "domainAdminUsername": {
             "type": "string",
             "metadata": {
-                "description": "The username of the user authorized to join machine to the domain"
+                "description": "The username of the domain administrator"
             }
         },
-        "domainJoinPassword": {
+        "domainAdminPassword": {
             "type": "securestring",
             "metadata": {
-                "description": "The password of the user authorized to join machine to the domain"
+                "description": "The password of the domain administrator"
             }
         },
-        "coreResourceGroup": {
+        "sqlServerServiceAccountUserName": {
             "type": "string",
             "metadata": {
-                "description": "The name of core Resource Group where the storage accounts and vnet are located."
+                "description": "The SQL Server Service account name"
             }
+        },
+        "sqlServerServiceAccountPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The SQL Server Service account password"
+            }
+        },
+        "sqlVMSize": {
+            "type": "string",
+            "metadata": {
+                "description": "The size of the SQL VMs Created"
+            },
+            "defaultValue": "Standard_DS1"
+        },
+        "witnessVMSize": {
+            "type": "string",
+            "metadata": {
+                "description": "The size of the Witness VM Created"
+            },
+            "defaultValue": "Standard_DS1"
+        },
+        "sqlLBIPAddress": {
+            "type": "string",
+            "metadata": {
+                "description": "The IP address of the new SQL ILB"
+            },
+            "defaultValue": "10.0.2.100"
+        },
+        "autoPatchingDay": {
+            "type": "string",
+            "metadata": {
+                "description": "The day of a week for auto patching"
+            },
+            "defaultValue": "Sunday"
+        },
+        "autoPatchingStartHour": {
+            "type": "string",
+            "metadata": {
+                "description": "The start hour of a day for auto patching"
+            },
+            "defaultValue": "2:00"
+        },
+        "sqlServerVersion": {
+            "type": "string",
+            "metadata": {
+                "description": "The Sql Server Version"
+            },
+            "defaultValue": "SQL2014-WS2012R2"
+        },
+        "numberOfSqlVMDisks": {
+            "type": "int",
+            "metadata": {
+                "description": "The number of data disks on each SQL Server VM"
+            },
+            "defaultValue": 2
+        },
+        "workloadType": {
+            "type": "string",
+            "metadata": {
+                "description": "The Sql VM work load type"
+            },
+            "defaultValue": ""
+        },
+        "pdcName": {
+            "type": "string",
+            "metadata": {
+                "description": "The computer name of the Primary Domain Controller"
+            }
+        },
+        "sqlVMName": {
+            "type": "string",
+            "metadata": {
+                "description": "The prefix used for naming SQL Server instances"
+            },
+            "defaultValue": "[concat(parameters('appName'),'-sql')]"
+        },
+        "sqlwVMName": {
+            "type": "string",
+            "metadata": {
+                "description": "The computer name of the SQL Server witness"
+            },
+            "defaultValue": "[concat(parameters('appName'),'-fsw')]"
+        },
+        "sqlAOListenerName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Sql AG Listener Name"
+            },
+            "defaultValue": "[concat(parameters('sqlVMName'),'-listener')]"
+        },
+        "sqlAOListenerPort": {
+            "type": "string",
+            "metadata": {
+                "description": "The Sql AG Listener port"
+            },
+            "defaultValue": "1433"
+        },
+        "sqlAOAGName": {
+            "type": "string",
+            "metadata": {
+                "description": "The Sql AlwaysOn Group Name"
+            },
+            "defaultValue": "[concat(parameters('sqlVMName'),'-aoag')]"
+        },
+        "diagSaType": {
+            "type": "string",
+            "metadata": {
+                "description": "Diagnostics storage account type"
+            },
+            "defaultValue": "Standard_LRS"
+        },
+        "vmSaType": {
+            "type": "string",
+            "metadata": {
+                "description": "Virtual machine storage account type"
+            },
+            "defaultValue": "Standard_LRS"
         }
     },
     "variables": {
-        "diagSaName": "[concat(parameters('appName'),'diagsa')]",
-        "storageResourceId": "[concat(subscription().id, '/resourceGroups/', parameters('coreResourceGroup'))]",
-        "vmSaSuffix": "[concat(parameters('appName'),'vmsa')]",
-        "vmSaNames": [
-            "[concat(uniqueString(concat(variables('storageResourceId'), variables('vmSaSuffix'), '0')), variables('vmSaSuffix'), '0')]",
-            "[concat(uniqueString(concat(variables('storageResourceId'), variables('vmSaSuffix'), '1')), variables('vmSaSuffix'), '1')]",
-            "[concat(uniqueString(concat(variables('storageResourceId'), variables('vmSaSuffix'), '2')), variables('vmSaSuffix'), '2')]",
-            "[concat(uniqueString(concat(variables('storageResourceId'), variables('vmSaSuffix'), '3')), variables('vmSaSuffix'), '3')]",
-            "[concat(uniqueString(concat(variables('storageResourceId'), variables('vmSaSuffix'), '4')), variables('vmSaSuffix'), '4')]"
-        ]
+        "storageDeploymentName": "[concat(deployment().name,'-storage')]",
+        "sqlalwaysonDeploymentName": "[concat(deployment().name,'-sqlalwayson')]"
     },
     "resources": [
+        {
+            "name": "[variables('storageDeploymentName')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/storage/storage.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "resourceLocation": {
+                        "value": "[parameters('resourceLocation')]"
+                    },
+                    "appName": {
+                        "value": "[parameters('appName')]"
+                    },
+                    "vmSaType": {
+                        "value": "[parameters('vmSaType')]"
+                    },
+                    "diagSaType": {
+                        "value": "[parameters('diagSaType')]"
+                    }
+                }
+            }
+        },
         {
             "name": "[variables('sqlalwaysonDeploymentName')]",
             "type": "Microsoft.Resources/deployments",
@@ -112,11 +254,56 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
+                    "_artifactsLocation": {
+                        "value": "https://raw.githubusercontent.com/apulliam/ModularARM/master"
+                    },
+                    "_artifactsLocationSasToken": {
+                        "value": ""
+                    },
+                    "deploymentPrefix": {
+                        "value": "[parameters('appName')]"
+                    },
+                    "location": {
+                        "value": "[parameters('resourceLocation')]"
+                    },
+                    "localAdminUsername": {
+                        "value": "[parameters('localAdminUsername')]"
+                    },
+                    "localAdminPassword": {
+                        "value": "[parameters('localAdminPassword')]"
+                    },
+                    "domainName": {
+                        "value": "[parameters('domainName')]"
+                    },
+                    "domainAdminUsername": {
+                        "value": "[parameters('domainAdminUsername')]"
+                    },
+                    "domainAdminPassword": {
+                        "value": "[parameters('domainAdminPassword')]"
+                    },
+                    "sqlServerServiceAccountUserName": {
+                        "value": "[parameters('sqlServerServiceAccountUserName')]"
+                    },
+                    "sqlServerServiceAccountPassword": {
+                        "value": "[parameters('sqlServerServiceAccountPassword')]"
+                    },
+                    "vnetResourceGroup": {
+                        "value": "[parameters('vnetResourceGroup')]"
+                    },
+                    "vnetName": {
+                        "value": "[parameters('vnetName')]"
+                    },
+                    "subnetName": {
+                        "value": "[parameters('subnetName')]"
+                    },
+                    "pdcName": {
+                        "value": "[parameters('pdcName')]"
+                    },
                     "vmSaNames": {
-                        "value": "[variables('vmSaNames')]"
+                        "value": "[reference(variables('storageDeploymentName')).outputs.vmStorageAccountNames.value]"
                     },
                     "diagSaName": {
-                        "value": "[variables('diagSaName')]"
+                        "value": "[reference(variables('storageDeploymentName')).outputs.diagStorageAccountName.value]"
                     }
                 }
             }
