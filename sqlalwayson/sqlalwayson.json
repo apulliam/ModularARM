@@ -221,8 +221,8 @@
                 },
                 "name": "[concat(parameters('sqlVMName'), '1-data-disk1')]",
                 "caching": "None",
-                "createOption": "empty",
-                "diskSizeGB": 1000,
+                "createOption": "Empty",
+                "diskSizeGB": "1000",
                 "lun": 0
             },
             {
@@ -231,8 +231,8 @@
               },
                 "name": "[concat(parameters('sqlVMName'), '1-data-disk2')]",
                 "caching": "None",
-                "createOption": "empty",
-                "diskSizeGB": 1000,
+                "createOption": "Empty",
+                "diskSizeGB": "1000",
                 "lun": 1
             },
             {
@@ -241,8 +241,8 @@
               },
                 "name": "[concat(parameters('sqlVMName'), '1-data-disk3')]",
                 "caching": "None",
-                "createOption": "empty",
-                "diskSizeGB": 1000,
+                "createOption": "Empty",
+                "diskSizeGB": "1000",
                 "lun": 2
             },
             {
@@ -251,8 +251,8 @@
               },
                 "name": "[concat(parameters('sqlVMName'), '1-data-disk4')]",
                 "caching": "None",
-                "createOption": "empty",
-                "diskSizeGB": 1000,
+                "createOption": "Empty",
+                "diskSizeGB": "1000",
                 "lun": 3
             }
         ],
@@ -263,8 +263,8 @@
               },
                 "name": "[concat(parameters('sqlVMName'), '2-data-disk1')]",
                 "caching": "None",
-                "createOption": "empty",
-                "diskSizeGB": 1000,
+                "createOption": "Empty",
+                "diskSizeGB": "1000",
                 "lun": 0
             },
             {
@@ -273,8 +273,8 @@
               },
                 "name": "[concat(parameters('sqlVMName'), '2-data-disk2')]",
                 "caching": "None",
-                "createOption": "empty",
-                "diskSizeGB": 1000,
+                "createOption": "Empty",
+                "diskSizeGB": "1000",
                 "lun": 1
             },
             {
@@ -283,8 +283,8 @@
               },
                 "name": "[concat(parameters('sqlVMName'), '2-data-disk3')]",
                 "caching": "None",
-                "createOption": "empty",
-                "diskSizeGB": 1000,
+                "createOption": "Empty",
+                "diskSizeGB": "1000",
                 "lun": 2
             },
             {
@@ -293,8 +293,8 @@
               },
                 "name": "[concat(parameters('sqlVMName'), '2-data-disk4')]",
                 "caching": "None",
-                "createOption": "empty",
-                "diskSizeGB": 1000,
+                "createOption": "Empty",
+                "diskSizeGB": "1000",
                 "lun": 3
             }
         ],
@@ -351,8 +351,8 @@
             "apiVersion": "2015-06-15",
             "location": "[parameters('location')]",
             "properties": {
-                "platformFaultDomainCount": "2",
-                "platformUpdateDomainCount": "5"
+                "platformFaultDomainCount": 2,
+                "platformUpdateDomainCount": 5
             }
         },
         {
@@ -389,7 +389,7 @@
                             "probe": {
                                 "id": "[variables('sqllbProbeID')]"
                             },
-                            "protocol": "tcp",
+                            "protocol": "Tcp",
                             "frontendPort": 1433,
                             "backendPort": 1433,
                             "enableFloatingIP": true
@@ -400,10 +400,10 @@
                     {
                         "name": "[variables('SQLAOProbe')]",
                         "properties": {
-                            "protocol": "tcp",
+                            "protocol": "Tcp",
                             "port": 59999,
-                            "intervalInSeconds": "5",
-                            "numberOfProbes": "2"
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 2
                         }
                     }
                 ]
@@ -481,7 +481,7 @@
                     "id": "[resourceId('Microsoft.Compute/availabilitySets/',variables('sqlAvailabilitySetName'))]"
                 },
                 "osProfile": {
-                    "computername": "[concat(parameters('sqlVMName'), add(copyindex(),1))]",
+                    "computerName": "[concat(parameters('sqlVMName'), add(copyindex(),1))]",
                     "adminUsername": "[parameters('localAdminUsername')]",
                     "adminPassword": "[parameters('localAdminPassword')]"
                 },
@@ -534,7 +534,7 @@
                     "id": "[resourceId('Microsoft.Compute/availabilitySets/',variables('sqlAvailabilitySetName'))]"
                 },
                 "osProfile": {
-                    "computername": "[parameters('sqlwVMName')]",
+                    "computerName": "[parameters('sqlwVMName')]",
                     "adminUsername": "[parameters('localAdminUsername')]",
                     "adminPassword": "[parameters('localAdminPassword')]"
                 },
@@ -560,8 +560,8 @@
                           },
                             "name": "[concat(parameters('sqlwVMName'),'-data-disk1')]",
                             "caching": "None",
-                            "createOption": "empty",
-                            "diskSizeGB": 128,
+                            "createOption": "Empty",
+                            "diskSizeGB": "128",
                             "lun": 0
                         }
                     ]
