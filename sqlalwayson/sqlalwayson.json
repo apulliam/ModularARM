@@ -520,27 +520,27 @@
                             "createOption": "Empty",
                             "diskSizeGB": "1000",
                             "lun": 1
-                        },
-                        {
-                            "vhd": {
-                                "uri": "[concat('http://',parameters('vmSaNames')[3],'.blob.core.windows.net/',variables('sqlVhdContainerName'),'/', parameters('sqlVMName'), add(copyindex(),1),'-data3.vhd')]"
-                            },
-                            "name": "[concat(parameters('sqlVMName'), add(copyindex(),1),'-data-disk3')]",
-                            "caching": "None",
-                            "createOption": "Empty",
-                            "diskSizeGB": "1000",
-                            "lun": 2
-                        },
-                        {
-                            "vhd": {
-                                "uri": "[concat('http://',parameters('vmSaNames')[4],'.blob.core.windows.net/',variables('sqlVhdContainerName'),'/', parameters('sqlVMName'),add(copyindex(),1), '-data4.vhd')]"
-                            },
-                            "name": "[concat(parameters('sqlVMName'), add(copyindex(),1),'-data-disk4')]",
-                            "caching": "None",
-                            "createOption": "Empty",
-                            "diskSizeGB": "1000",
-                            "lun": 3
                         }
+                        // {
+                        //     "vhd": {
+                        //         "uri": "[concat('http://',parameters('vmSaNames')[3],'.blob.core.windows.net/',variables('sqlVhdContainerName'),'/', parameters('sqlVMName'), add(copyindex(),1),'-data3.vhd')]"
+                        //     },
+                        //     "name": "[concat(parameters('sqlVMName'), add(copyindex(),1),'-data-disk3')]",
+                        //     "caching": "None",
+                        //     "createOption": "Empty",
+                        //     "diskSizeGB": "1000",
+                        //     "lun": 2
+                        // },
+                        // {
+                        //     "vhd": {
+                        //         "uri": "[concat('http://',parameters('vmSaNames')[4],'.blob.core.windows.net/',variables('sqlVhdContainerName'),'/', parameters('sqlVMName'),add(copyindex(),1), '-data4.vhd')]"
+                        //     },
+                        //     "name": "[concat(parameters('sqlVMName'), add(copyindex(),1),'-data-disk4')]",
+                        //     "caching": "None",
+                        //     "createOption": "Empty",
+                        //     "diskSizeGB": "1000",
+                        //     "lun": 3
+                        // }
                     ]
                 },
                 "networkProfile": {
