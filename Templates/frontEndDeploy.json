@@ -114,6 +114,20 @@
             "metadata": {
                 "description": "The password of the user authorized to join machine to the domain"
             }
+        },
+        "diagSaType": {
+            "type": "string",
+            "metadata": {
+                "description": "Diagnostics storage account type"
+            },
+            "defaultValue": "Standard_LRS"
+        },
+        "vmSaType": {
+            "type": "string",
+            "metadata": {
+                "description": "Virtual machine storage account type"
+            },
+            "defaultValue": "Standard_LRS"
         }
     },
     "variables": {
