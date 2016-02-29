@@ -21,7 +21,7 @@
             "value": "test@me1"
         },
         "domainName": {
-            "value": "test"
+            "value": "test.com"
         },
         "domainAdminUsername": {
             "value": "testme"
@@ -36,7 +36,7 @@
             "value": "test@me1"
         },
         "vnetResourceGroup": {
-            "value": "apulliam-test1"
+            "value": "apulliam-core"
         },
         "vnetName": {
             "value": "test-vnet"
