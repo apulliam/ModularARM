@@ -621,97 +621,103 @@
                     }
                 }
             }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('sqlwVMName'),'/CreateFileShareWitness')]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('sqlwVMName')]"
+            ],
+            "apiVersion": "2015-06-15",
+            "location": "[parameters('location')]",
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.8",
+                "autoUpgradeMinorVersion": false,
+                "settings": {
+                    "modulesURL": "[concat(parameters('_artifactsLocation'), '/sqlalwayson/CreateFileShareWitness.ps1.zip')]",
+                    "configurationFunction": "CreateFileShareWitness.ps1\\CreateFileShareWitness",
+                    "properties": {
+                        "domainName": "[parameters('domainName')]",
+                        "SharePath": "[variables('sharePath')]",
+                        "adminCreds": {
+                            "userName": "[parameters('domainAdminUsername')]",
+                            "password": "privateSettingsRef:adminPassword"
+                        }
+                    }
+                },
+                "protectedSettings": {
+                    "items": {
+                        "adminPassword": "[parameters('domainAdminPassword')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2015-06-15",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('sqlVMName'),'1/SqlVmIaasExtension')]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('sqlVMName'),'1']"
+            ],
+            "location": "[parameters('location')]",
+            "properties": {
+                "type": "SqlIaaSAgent",
+                "publisher": "Microsoft.SqlServer.Management",
+                "typeHandlerVersion": "1.2",
+                "autoUpgradeMinorVersion": "true",
+                "settings": {
+                    "AutoTelemetrySettings": {
+                        "Region": "[parameters('location')]"
+                    },
+                    "AutoPatchingSettings": {
+                        "PatchCategory": "WindowsMandatoryUpdates",
+                        "Enable": true,
+                        "DayOfWeek": "[parameters('autoPatchingDay')]",
+                        "MaintenanceWindowStartingHour": "[parameters('autoPatchingStartHour')]",
+                        "MaintenanceWindowDuration": "60"
+                    },
+                    "AutoBackupSettings": {
+                        "Enable": false,
+                        "RetentionPeriod": "30",
+                        "EnableEncryption": false
+                    }
+                }
+            }
+        },
+        {
+           "apiVersion": "2015-06-15",
+           "type": "Microsoft.Compute/virtualMachines/extensions",
+           "name": "[concat(parameters('sqlVMName'),'2/SqlVmIaasExtension')]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('sqlVMName'),'2']"
+            ],
+           "location": "[parameters('location')]",
+           "properties": {
+               "type": "SqlIaaSAgent",
+               "publisher": "Microsoft.SqlServer.Management",
+               "typeHandlerVersion": "1.2",
+               "autoUpgradeMinorVersion": "true",
+               "settings": {
+                   "AutoTelemetrySettings": {
+                       "Region": "[parameters('location')]"
+                   },
+                   "AutoPatchingSettings": {
+                       "PatchCategory": "WindowsMandatoryUpdates",
+                       "Enable": true,
+                       "DayOfWeek": "[parameters('autoPatchingDay')]",
+                       "MaintenanceWindowStartingHour": "[parameters('autoPatchingStartHour')]",
+                       "MaintenanceWindowDuration": "60"
+                   },
+                   "AutoBackupSettings": {
+                       "Enable": false,
+                       "RetentionPeriod": "30",
+                       "EnableEncryption": false
+                   }
+               }
+           }
         }
-        //{
-        //  "type": "Microsoft.Compute/virtualMachines/extensions",
-        //  "name": "[concat(parameters('sqlwVMName'),'/CreateFileShareWitness')]",
-        //  "dependsOn": [
-        //    "[]"
-        //  ]
-        //  "apiVersion": "2015-06-15",
-        //  "location": "[parameters('location')]",
-        //  "properties": {
-        //    "publisher": "Microsoft.Powershell",
-        //    "type": "DSC",
-        //    "typeHandlerVersion": "2.8",
-        //    "autoUpgradeMinorVersion": false,
-        //    "settings": {
-        //      "modulesURL": "[concat(parameters('_artifactsLocation'), '/sqlalwayson/CreateFileShareWitness.ps1.zip')]",
-        //      "configurationFunction": "CreateFileShareWitness.ps1\\CreateFileShareWitness",
-        //      "properties": {
-        //        "domainName": "[parameters('domainName')]",
-        //        "SharePath": "[variables('sharePath')]",
-        //        "adminCreds": {
-        //          "userName": "[parameters('domainAdminUsername')]",
-        //          "password": "privateSettingsRef:adminPassword"
-        //        }
-        //      }
-        //    },
-        //    "protectedSettings": {
-        //      "items": {
-        //        "adminPassword": "[parameters('domainAdminPassword')]"
-        //      }
-        //    }
-        //  }
-        //}
-        //{
-        //    "apiVersion": "2015-06-15",
-        //    "type": "Microsoft.Compute/virtualMachines/extensions",
-        //    "name": "[concat(parameters('sqlVMName'),'0/SqlVmIaasExtension')]",
-        //    "location": "[parameters('location')]",
-        //    "properties": {
-        //        "type": "SqlIaaSAgent",
-        //        "publisher": "Microsoft.SqlServer.Management",
-        //        "typeHandlerVersion": "1.2",
-        //        "autoUpgradeMinorVersion": "true",
-        //        "settings": {
-        //            "AutoTelemetrySettings": {
-        //                "Region": "[parameters('location')]"
-        //            },
-        //            "AutoPatchingSettings": {
-        //                "PatchCategory": "WindowsMandatoryUpdates",
-        //                "Enable": true,
-        //                "DayOfWeek": "[parameters('autoPatchingDay')]",
-        //                "MaintenanceWindowStartingHour": "[parameters('autoPatchingStartHour')]",
-        //                "MaintenanceWindowDuration": "60"
-        //            },
-        //            "AutoBackupSettings": {
-        //                "Enable": false,
-        //                "RetentionPeriod": "30",
-        //                "EnableEncryption": false
-        //            }
-        //        }
-        //    }
-        //},
-        //{
-        //    "apiVersion": "2015-06-15",
-        //    "type": "Microsoft.Compute/virtualMachines/extensions",
-        //    "name": "[concat(parameters('sqlVMName'),'1/SqlVmIaasExtension')]",
-        //    "location": "[parameters('location')]",
-        //    "properties": {
-        //        "type": "SqlIaaSAgent",
-        //        "publisher": "Microsoft.SqlServer.Management",
-        //        "typeHandlerVersion": "1.2",
-        //        "autoUpgradeMinorVersion": "true",
-        //        "settings": {
-        //            "AutoTelemetrySettings": {
-        //                "Region": "[parameters('location')]"
-        //            },
-        //            "AutoPatchingSettings": {
-        //                "PatchCategory": "WindowsMandatoryUpdates",
-        //                "Enable": true,
-        //                "DayOfWeek": "[parameters('autoPatchingDay')]",
-        //                "MaintenanceWindowStartingHour": "[parameters('autoPatchingStartHour')]",
-        //                "MaintenanceWindowDuration": "60"
-        //            },
-        //            "AutoBackupSettings": {
-        //                "Enable": false,
-        //                "RetentionPeriod": "30",
-        //                "EnableEncryption": false
-        //            }
-        //        }
-        //    }
-        //},
         //{
         //    "type": "Microsoft.Compute/virtualMachines/extensions",
         //    "name": "[concat(parameters('sqlVMName'),'0/sqlAOPrepare')]",
