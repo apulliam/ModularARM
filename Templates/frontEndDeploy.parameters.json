@@ -14,9 +14,7 @@
         "resourceLocation": {
             "value": "East US"
         },
-        "vnetResourceGroup": {
-            "value": "apulliam-test1"
-        },
+      
         "vnetName": {
             "value": "test-vnet"
         },

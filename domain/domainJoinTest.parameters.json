@@ -6,9 +6,7 @@
         "existingVNETName": {
             "value": "test-vnet"
         },
-        "vnetResourceGroup": {
-            "value": "apulliam-test1"
-        },
+      
         "existingSubnetName": {
             "value": "test-dc"
         },
