@@ -776,8 +776,8 @@
                   "clusterName": "[variables('clusterName')]",
                   "sharePath": "[concat('\\\\',parameters('sqlwVMName'),'\\',parameters('sharePath'))]",
                   "nodes": [
-                    "[concat(parameters('sqlVMName'),'0')]",
-                    "[concat(parameters('sqlVMName'),'1')]"
+                    "[concat(parameters('sqlVMName'),'1')]",
+                    "[concat(parameters('sqlVMName'),'2')]"
                   ],
                   "sqlAlwaysOnEndpointName": "[variables('sqlAOEPName')]",
                   "sqlAlwaysOnAvailabilityGroupName": "[parameters('sqlAOAGName')]",
@@ -786,8 +786,8 @@
                   "databaseNames": "AutoHa-sample",
                   "lbName": "[variables('sqlLBName')]",
                   "lbAddress": "[parameters('sqlLBIPAddress')]",
-                  "primaryReplica": "[concat(parameters('sqlVMName'),'1')]",
-                  "secondaryReplica": "[concat(parameters('sqlVMName'),'0')]",
+                  "primaryReplica": "[concat(parameters('sqlVMName'),'2')]",
+                  "secondaryReplica": "[concat(parameters('sqlVMName'),'1')]",
                   "dnsServerName": "[parameters('pdcName')]",
                   "adminCreds": {
                     "userName": "[parameters('localAdminUsername')]",
