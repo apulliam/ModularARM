@@ -774,7 +774,7 @@
                 "properties": {
                   "domainName": "[parameters('domainName')]",
                   "clusterName": "[variables('clusterName')]",
-                  "sharePath": "[concat('\\\\',parameters('sqlwVMName'),'\\',parameters('sharePath'))]",
+                  "sharePath": "[concat('\\\\',parameters('sqlwVMName'),'\\',variables('sharePath'))]",
                   "nodes": [
                     "[concat(parameters('sqlVMName'),'1')]",
                     "[concat(parameters('sqlVMName'),'2')]"
