@@ -14,7 +14,9 @@
         "resourceLocation": {
             "value": "East US"
         },
-      
+        "vnetResourceGroup": {
+           
+        },
         "vnetName": {
             "value": "test-vnet"
         },
