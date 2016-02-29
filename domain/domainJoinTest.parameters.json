@@ -16,7 +16,7 @@
             "value": "testme"
         },
         "vmAdminPassword": {
-            "value": "securestring"
+            "value": "test@me1"
         },
         "domainToJoin": {
             "value": "test.com"
