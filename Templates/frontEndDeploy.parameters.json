@@ -8,14 +8,14 @@
     "resourceLocation": {
       "value": "East US"
     },
-    "coreResourceGroup": {
-      "value": "apulliam-invs-core"
+    "vnetResourceGroup": {
+      "value": "apulliam-test1"
     },
     "vnetName": {
-      "value": "invs-vnet"
+      "value": "test-vnet"
     },
     "subnetName": {
-      "value": "invs-fe"
+      "value": "test-fe"
     },
     "webServerCount": {
       "value": 2
@@ -24,19 +24,19 @@
       "value": 2
     },
     "localAdminUsername": {
-      "value": "apulliam"
+      "value": "testme"
     },
     "localAdminPassword": {
-      "value": "n7923n@ryy"
+      "value": "test@me1"
     },
     "domainName": {
-      "value": "apulliam.com"
+      "value": "test.com"
     },
     "domainJoinUsername": {
-      "value": "apulliam"
+      "value": "testme"
     },
     "domainJoinPassword": {
-      "value": "n7923n@ryy"
+      "value": "test@me1"
     }
   }
 }
