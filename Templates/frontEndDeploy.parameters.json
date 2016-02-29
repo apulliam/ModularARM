@@ -1,42 +1,48 @@
 {
-  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "appName": {
-      "value": "invs"
-    },
-    "resourceLocation": {
-      "value": "East US"
-    },
-    "vnetResourceGroup": {
-      "value": "apulliam-test1"
-    },
-    "vnetName": {
-      "value": "test-vnet"
-    },
-    "subnetName": {
-      "value": "test-fe"
-    },
-    "webServerCount": {
-      "value": 2
-    },
-    "webApiCount": {
-      "value": 2
-    },
-    "localAdminUsername": {
-      "value": "testme"
-    },
-    "localAdminPassword": {
-      "value": "test@me1"
-    },
-    "domainName": {
-      "value": "test.com"
-    },
-    "domainJoinUsername": {
-      "value": "testme"
-    },
-    "domainJoinPassword": {
-      "value": "test@me1"
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "_artifactsLocation": {
+            "value": "https://raw.githubusercontent.com/apulliam/ModularARM/master"
+        },
+        "_artifactsLocationSasToken": {
+            "value": ""
+        },
+        "appName": {
+            "value": "invs"
+        },
+        "resourceLocation": {
+            "value": "East US"
+        },
+        "vnetResourceGroup": {
+            "value": "apulliam-test1"
+        },
+        "vnetName": {
+            "value": "test-vnet"
+        },
+        "subnetName": {
+            "value": "test-fe"
+        },
+        "webServerCount": {
+            "value": 2
+        },
+        "webApiCount": {
+            "value": 2
+        },
+        "localAdminUsername": {
+            "value": "testme"
+        },
+        "localAdminPassword": {
+            "value": "test@me1"
+        },
+        "domainName": {
+            "value": "test.com"
+        },
+        "domainJoinUsername": {
+            "value": "testme"
+        },
+        "domainJoinPassword": {
+            "value": "test@me1"
+        }
     }
-  }
 }
