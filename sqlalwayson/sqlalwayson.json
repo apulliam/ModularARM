@@ -717,103 +717,103 @@
                    }
                }
            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('sqlVMName'),'1/sqlAOPrepare')]",
+            "apiVersion": "2015-06-15",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/',parameters('sqlwVMName'),'/extensions/CreateFileShareWitness')]",
+                "[concat('Microsoft.Compute/virtualMachines/',parameters('sqlVMName'),'1/extensions/SqlVmIaasExtension')]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.8",
+                "autoUpgradeMinorVersion": false,
+              "settings": {
+                "modulesURL": "[concat(parameters('_artifactsLocation'), '/sqlalwayson/PrepareAlwaysOnSqlServer.ps1.zip')]",
+                "configurationFunction": "PrepareAlwaysOnSqlServer.ps1\\PrepareAlwaysOnSqlServer",
+                "properties": {
+                  "domainName": "[parameters('domainName')]",
+                  "sqlAlwaysOnEndpointName": "[variables('sqlAOEPName')]",
+                  "adminCreds": {
+                    "userName": "[parameters('localAdminUsername')]",
+                    "password": "privateSettingsRef:localAdminPassword"
+                  },
+                  "sqlServiceCreds": {
+                    "userName": "[parameters('sqlServerServiceAccountUserName')]",
+                    "password": "privateSettingsRef:SqlServerServiceAccountPassword"
+                  },
+                  "NumberOfDisks": "[parameters('numberOfSqlVMDisks')]",
+                  "WorkloadType": "[parameters('workloadType')]"
+                }
+              },
+                "protectedSettings": {
+                    "items": {
+                        "localAdminPassword": "[parameters('localAdminPassword')]",
+                        "sqlServerServiceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('sqlVMName'),'2/configuringAlwaysOn')]",
+            "apiVersion": "2015-06-15",
+            "location": "[parameters('location')]",
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.8",
+                "autoUpgradeMinorVersion": false,
+              "settings": {
+                "modulesURL": "[concat(parameters('_artifactsLocation'), '/sqlalwayson/Configuring.ps1.zip')]",
+                "configurationFunction": "CreateFailoverCluster.ps1\\CreateFailoverCluster",
+                "properties": {
+                  "domainName": "[parameters('domainName')]",
+                  "clusterName": "[variables('clusterName')]",
+                  "sharePath": "[concat('\\\\',parameters('sqlwVMName'),'\\',parameters('sharePath'))]",
+                  "nodes": [
+                    "[concat(parameters('sqlVMName'),'0')]",
+                    "[concat(parameters('sqlVMName'),'1')]"
+                  ],
+                  "sqlAlwaysOnEndpointName": "[variables('sqlAOEPName')]",
+                  "sqlAlwaysOnAvailabilityGroupName": "[parameters('sqlAOAGName')]",
+                  "sqlAlwaysOnAvailabilityGroupListenerName": "[parameters('sqlAOListenerName')]",
+                  "SqlAlwaysOnAvailabilityGroupListenerPort": "[parameters('sqlAOListenerPort')]",
+                  "databaseNames": "AutoHa-sample",
+                  "lbName": "[variables('sqlLBName')]",
+                  "lbAddress": "[parameters('sqlLBIPAddress')]",
+                  "primaryReplica": "[concat(parameters('sqlVMName'),'1')]",
+                  "secondaryReplica": "[concat(parameters('sqlVMName'),'0')]",
+                  "dnsServerName": "[parameters('pdcName')]",
+                  "adminCreds": {
+                    "userName": "[parameters('localAdminUsername')]",
+                    "password": "privateSettingsRef:localAdminPassword"
+                  },
+                  "sqlServiceCreds": {
+                    "userName": "[parameters('sqlServerServiceAccountUserName')]",
+                    "password": "privateSettingsRef:sqlServerServiceAccountPassword"
+                  },
+                  "SQLAuthCreds": {
+                    "userName": "sqlsa",
+                    "password": "privateSettingsRef:sqlAuthPassword"
+                  },
+                  "NumberOfDisks": "[parameters('numberOfSqlVMDisks')]",
+                  "WorkloadType": "[parameters('workloadType')]"
+                }
+              },
+                "protectedSettings": {
+                    "items": {
+                        "localAdminPassword": "[parameters('localAdminPassword')]",
+                        "sqlServerServiceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]",
+                        "sqlAuthPassword": "[parameters('sqlServerServiceAccountPassword')]"
+                    }
+                }
+            }
         }
-        //{
-        //    "type": "Microsoft.Compute/virtualMachines/extensions",
-        //    "name": "[concat(parameters('sqlVMName'),'0/sqlAOPrepare')]",
-        //    "apiVersion": "2015-06-15",
-        //    "location": "[parameters('location')]",
-        //    "dependsOn": [
-        //        "[concat('Microsoft.Compute/virtualMachines/',parameters('sqlwVMName'),'/extensions/CreateFileShareWitness')]",
-        //        "[concat('Microsoft.Compute/virtualMachines/',parameters('sqlVMName'),'0/extensions/SqlVmIaasExtension')]"
-        //    ],
-        //    "properties": {
-        //        "publisher": "Microsoft.Powershell",
-        //        "type": "DSC",
-        //        "typeHandlerVersion": "2.8",
-        //        "autoUpgradeMinorVersion": false,
-        //      "settings": {
-        //        "modulesURL": "[concat(parameters('_artifactsLocation'), '/sqlalwayson/PrepareAlwaysOnSqlServer.ps1.zip')]",
-        //        "configurationFunction": "PrepareAlwaysOnSqlServer.ps1\\PrepareAlwaysOnSqlServer",
-        //        "properties": {
-        //          "domainName": "[parameters('domainName')]",
-        //          "sqlAlwaysOnEndpointName": "[variables('sqlAOEPName')]",
-        //          "adminCreds": {
-        //            "userName": "[parameters('localAdminUsername')]",
-        //            "password": "privateSettingsRef:localAdminPassword"
-        //          },
-        //          "sqlServiceCreds": {
-        //            "userName": "[parameters('sqlServerServiceAccountUserName')]",
-        //            "password": "privateSettingsRef:SqlServerServiceAccountPassword"
-        //          },
-        //          "NumberOfDisks": "[parameters('numberOfSqlVMDisks')]",
-        //          "WorkloadType": "[parameters('workloadType')]"
-        //        }
-        //      },
-        //        "protectedSettings": {
-        //            "items": {
-        //                "localAdminPassword": "[parameters('localAdminPassword')]",
-        //                "sqlServerServiceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]"
-        //            }
-        //        }
-        //    }
-        //},
-        //{
-        //    "type": "Microsoft.Compute/virtualMachines/extensions",
-        //    "name": "[concat(parameters('sqlVMName'),'1/configuringAlwaysOn')]",
-        //    "apiVersion": "2015-06-15",
-        //    "location": "[parameters('location')]",
-        //    "properties": {
-        //        "publisher": "Microsoft.Powershell",
-        //        "type": "DSC",
-        //        "typeHandlerVersion": "2.8",
-        //        "autoUpgradeMinorVersion": false,
-        //      "settings": {
-        //        "modulesURL": "[concat(parameters('_artifactsLocation'), '/sqlalwayson/Configuring.ps1.zip')]",
-        //        "configurationFunction": "[parameters('createClusterConfigurationFunction')]",
-        //        "properties": {
-        //          "domainName": "[parameters('domainName')]",
-        //          "clusterName": "[variables('clusterName')]",
-        //          "sharePath": "[concat('\\\\',parameters('sqlwVMName'),'\\',parameters('sharePath'))]",
-        //          "nodes": [
-        //            "[concat(parameters('sqlVMName'),'0')]",
-        //            "[concat(parameters('sqlVMName'),'1')]"
-        //          ],
-        //          "sqlAlwaysOnEndpointName": "[variables('sqlAOEPName')]",
-        //          "sqlAlwaysOnAvailabilityGroupName": "[parameters('sqlAOAGName')]",
-        //          "sqlAlwaysOnAvailabilityGroupListenerName": "[parameters('sqlAOListenerName')]",
-        //          "SqlAlwaysOnAvailabilityGroupListenerPort": "[parameters('sqlAOListenerPort')]",
-        //          "databaseNames": "AutoHa-sample",
-        //          "lbName": "[variables('sqlLBName')]",
-        //          "lbAddress": "[parameters('sqlLBIPAddress')]",
-        //          "primaryReplica": "[concat(parameters('sqlVMName'),'1')]",
-        //          "secondaryReplica": "[concat(parameters('sqlVMName'),'0')]",
-        //          "dnsServerName": "[parameters('adPDCVMName')]",
-        //          "adminCreds": {
-        //            "userName": "[parameters('localAdminUsername')]",
-        //            "password": "privateSettingsRef:localAdminPassword"
-        //          },
-        //          "sqlServiceCreds": {
-        //            "userName": "[parameters('sqlServerServiceAccountUserName')]",
-        //            "password": "privateSettingsRef:sqlServerServiceAccountPassword"
-        //          },
-        //          "SQLAuthCreds": {
-        //            "userName": "sqlsa",
-        //            "password": "privateSettingsRef:sqlAuthPassword"
-        //          },
-        //          "NumberOfDisks": "[parameters('numberOfSqlVMDisks')]",
-        //          "WorkloadType": "[parameters('workloadType')]"
-        //        }
-        //      },
-        //        "protectedSettings": {
-        //            "items": {
-        //                "localAdminPassword": "[parameters('localAdminPassword')]",
-        //                "sqlServerServiceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]",
-        //                "sqlAuthPassword": "[parameters('sqlServerServiceAccountPassword')]"
-        //            }
-        //        }
-        //    }
-        //}
     ],
     "outputs": {}
 }
