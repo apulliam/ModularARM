@@ -659,7 +659,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('sqlVMName'),'1/SqlVmIaasExtension')]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('sqlVMName'),'1']"
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('sqlVMName'),'1')]"
             ],
             "location": "[parameters('location')]",
             "properties": {
@@ -691,7 +691,7 @@
            "type": "Microsoft.Compute/virtualMachines/extensions",
            "name": "[concat(parameters('sqlVMName'),'2/SqlVmIaasExtension')]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('sqlVMName'),'2']"
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('sqlVMName'),'2')]"
             ],
            "location": "[parameters('location')]",
            "properties": {
