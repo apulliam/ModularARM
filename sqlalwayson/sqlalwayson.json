@@ -626,7 +626,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('sqlwVMName'),'/CreateFileShareWitness')]",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('sqlwVMName')]"
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('sqlwVMName'))]"
             ],
             "apiVersion": "2015-06-15",
             "location": "[parameters('location')]",
