@@ -1,0 +1,42 @@
+﻿{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "domainName": {
+            "value": "test.com"
+        },
+        "domainAdminUsername": {
+            "value": "testme"
+        },
+        "domainAdminPassword": {
+            "value": "test@me1"
+        },
+        "existingVNETName": {
+            "value": "test-vnet"
+        },
+        "vnetResourceGroup": {
+            "value": "apulliam-test1"
+        },
+        "existingSubnetName": {
+            "value": "test-dc"
+        },
+        "vmAdminUsername": {
+            "value": "testme"
+        },
+        "vmAdminPassword": {
+            "value": "securestring"
+        },
+        "domainToJoin": {
+            "value": "test.com"
+        },
+        "domainUsername": {
+            "value": "testme"
+        },
+        "domainPassword": {
+            "value": "test@me1"
+        },
+        "dnsLabelPrefix": {
+            "value": "testme"
+        }
+    }
+}
