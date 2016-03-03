@@ -209,7 +209,7 @@
         "sqlImagePublisher": "MicrosoftSQLServer",
         "sqlImageOffer": "[parameters('sqlServerVersion')]",
         "sqlImageSku": "Enterprise",
-        "subnetRef": "[concat(variables('VnetID'),'/subnets/',parameters('subnetName'))]",
+        "subnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]",
         "sqlBEAddressPoolID": "[concat(variables('sqllbID'),'/backendAddressPools/',variables('sqlLBBE'))]",
         "sqllbFEConfigID": "[concat(variables('sqllbID'),'/frontendIPConfigurations/',variables('sqlLBFE'))]",
         "sqllbProbeID": "[concat(variables('sqllbID'),'/probes/',variables('SQLAOProbe'))]",
@@ -489,7 +489,7 @@
                     "imageReference": {
                         "publisher": "[variables('sqlImagePublisher')]",
                         "offer": "[variables('sqlImageOffer')]",
-                        "sku": "[variables('sqlImageSKU')]",
+                        "sku": "[variables('sqlImageSku')]",
                         "version": "latest"
                     },
                     "osDisk": {
@@ -553,7 +553,7 @@
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
                         "enabled": "true",
-                        "storageUri": "[concat('http://',parameters('diagSAName'),'.blob.core.windows.net')]"
+                        "storageUri": "[concat('http://',parameters('diagSaName'),'.blob.core.windows.net')]"
                     }
                 }
             }
@@ -617,7 +617,7 @@
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
                         "enabled": "true",
-                        "storageUri": "[concat('http://',parameters('diagSAName'),'.blob.core.windows.net')]"
+                        "storageUri": "[concat('http://',parameters('diagSaName'),'.blob.core.windows.net')]"
                     }
                 }
             }
@@ -763,6 +763,10 @@
             "name": "[concat(parameters('sqlVMName'),'2/configuringAlwaysOn')]",
             "apiVersion": "2015-06-15",
             "location": "[parameters('location')]",
+             "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/',parameters('sqlwVMName'),'/extensions/CreateFileShareWitness')]",
+                "[concat('Microsoft.Compute/virtualMachines/',parameters('sqlVMName'),'2/extensions/SqlVmIaasExtension')]"
+            ],
             "properties": {
                 "publisher": "Microsoft.Powershell",
                 "type": "DSC",
