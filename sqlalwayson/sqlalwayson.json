@@ -113,7 +113,7 @@
             "metadata": {
                 "description": "The start hour of a day for auto patching"
             },
-            "defaultValue": "2:00"
+            "defaultValue": "2"
         },
         "sqlServerVersion": {
             "type": "string",
