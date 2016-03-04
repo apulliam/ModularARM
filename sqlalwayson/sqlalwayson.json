@@ -134,7 +134,7 @@
             "metadata": {
                 "description": "The Sql VM work load type"
             },
-            "defaultValue": ""
+            "defaultValue": "GENERAL"
         },
         "pdcName": {
             "type": "string",
@@ -773,7 +773,7 @@
                 "typeHandlerVersion": "2.8",
                 "autoUpgradeMinorVersion": false,
               "settings": {
-                "modulesURL": "[concat(parameters('_artifactsLocation'), '/sqlalwayson/Configuring.ps1.zip')]",
+                "modulesURL": "[concat(parameters('_artifactsLocation'), '/sqlalwayson/CreateFailoverCluster.ps1.zip')]",
                 "configurationFunction": "CreateFailoverCluster.ps1\\CreateFailoverCluster",
                 "properties": {
                   "domainName": "[parameters('domainName')]",
