@@ -8,7 +8,8 @@
     },
     "_artifactsLocationSasToken": {
       "type": "securestring",
-      "defaultValue": null
+      "defaultValue": ""
+      
  
     },
     "resourceLocation": {
