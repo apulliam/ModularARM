@@ -1,1 +1,7 @@
-﻿C:\ModularARM\Scripts\Deploy-AzureResourceGroup.ps1 -ResourceGroupLocation "East US" -ResourceGroupName "apulliam-database" -UploadArtifacts -StorageAccountResourceGroupName apulliam-armdeploy -StorageContainerName apulliam-database-stageartifacts -StorageAccountName apulliamarmdeploy -TemplateFile C:\ModularARM\Templates\databaseDeploy.json -TemplateParametersFile C:\ModularARM\Templates\databaseDeploy.parameters.json -ArtifactStagingDirectory C:\ModularARM\bin\Debug\staging\ModularARM -AzCopyPath C:\ModularARM\Tools\AzCopy.exe -DSCSourceFolder C:\ModularARM\DSC -Verbose 
+﻿$resourceGroupName="apulliam-database"
+$resourceGroupLocation = "East US"
+$storageAccountResourceGroupName = "apulliam-armdeploy"
+$storageAccountName = "apulliamarmdeploy"
+$storageContainerName = $resourceGroupName + "-stageartifacts"
+
+.\Deploy-AzureResourceGroup.ps1 -ResourceGroupLocation "East US" -ResourceGroupName "apulliam-database" -UploadArtifacts -StorageAccountResourceGroupName apulliam-armdeploy -StorageContainerName apulliam-database-stageartifacts -StorageAccountName apulliamarmdeploy -TemplateFile ..\Templates\databaseDeploy.json -TemplateParametersFile ..\Templates\databaseDeploy.parameters.json -ArtifactStagingDirectory "..\" -AzCopyPath ..\Tools\AzCopy.exe -DSCSourceFolder ..\DSC -Verbose 

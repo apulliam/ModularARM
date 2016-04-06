@@ -7,7 +7,9 @@
       "defaultValue": "https://raw.githubusercontent.com/apulliam/ModularARM/master"
     },
     "_artifactsLocationSasToken": {
-      "type": "securestring"
+      "type": "securestring",
+      "defaultValue": null
+ 
     },
     "resourceLocation": {
       "type": "string",
