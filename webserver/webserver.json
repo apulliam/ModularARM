@@ -135,11 +135,7 @@
             "sku": "2012-R2-Datacenter",
             "version": "latest"
         },
-        "domainAndUsername": [
-            "concat(parameters('domainToJoin')",
-            "\\",
-            "parameters('domainJoinUsername'))"
-        ],
+        "domainAndUsername": "[concat(parameters('domainName'),'\\', parameters('domainJoinUsername'))]",
         "ouPath": "",
         "domainJoinOptions": 3
     },
