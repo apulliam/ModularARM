@@ -4,7 +4,7 @@
   "parameters": {
     "_artifactsLocation": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/apulliam/ModularARM/master"
+      "defaultValue": ""
     },
     "_artifactsLocationSasToken": {
       "type": "securestring",
@@ -54,7 +54,7 @@
       "metadata": {
         "description": "Virtual machine storage account type"
       },
-      "defaultValue": "Standard_LRS"
+      "defaultValue": "Premium_LRS"
     },
     "vnetAddressRange": {
       "type": "string",
@@ -115,7 +115,7 @@
       "metadata": {
         "description": "VM size of Domain Controllers."
       },
-      "defaultValue": "Standard_A1"
+      "defaultValue": "Standard_DS1"
     },
     "localAdminUsername": {
       "type": "string",

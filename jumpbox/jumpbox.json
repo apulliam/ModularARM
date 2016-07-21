@@ -85,7 +85,7 @@
       "metadata": {
         "description": "VM size of the jumpbox."
       },
-      "defaultValue": "Standard_A1"
+      "defaultValue": "Standard_DS1"
     }
   },
   "variables": {
