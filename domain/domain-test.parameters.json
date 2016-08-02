@@ -43,6 +43,15 @@
         },
         "resourceLocation": {
             "value": "East US"
+        },
+        "pdcInternalIpAddress": {
+            "value": "10.0.0.100"
+        },
+        "bdcInternalIpAddress": {
+            "value": "10.0.0.101"
+        },
+        "dcSku": {
+            "value": "Standard_A1"
         }
     }
 }

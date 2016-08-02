@@ -137,7 +137,12 @@
         },
         "domainAndUsername": "[concat(parameters('domainName'),'\\', parameters('domainJoinUsername'))]",
         "ouPath": "",
-        "domainJoinOptions": 3
+        "domainJoinOptions": 3,
+                "[concat('https://', parameters('vmSaNames')[0], '.blob.core.windows.net/', variables('vhdContainerName'))]",
+                                "[concat('https://', parameters('vmSaNames')[1], '.blob.core.windows.net/', variables('vhdContainerName'))]",
+                                "[concat('https://', parameters('vmSaNames')[2], '.blob.core.windows.net/', variables('vhdContainerName'))]",
+                                "[concat('https://', parameters('vmSaNames')[3], '.blob.core.windows.net/', variables('vhdContainerName'))]",
+                                "[concat('https://', parameters('vmSaNames')[4], '.blob.core.windows.net/', variables('vhdContainerName'))]"
     },
     "resources": [
         {
@@ -204,11 +209,7 @@
                     "storageProfile": {
                         "osDisk": {
                             "vhdContainers": [
-                                "[concat('https://', parameters('vmSaNames')[0], '.blob.core.windows.net/', variables('vhdContainerName'))]",
-                                "[concat('https://', parameters('vmSaNames')[1], '.blob.core.windows.net/', variables('vhdContainerName'))]",
-                                "[concat('https://', parameters('vmSaNames')[2], '.blob.core.windows.net/', variables('vhdContainerName'))]",
-                                "[concat('https://', parameters('vmSaNames')[3], '.blob.core.windows.net/', variables('vhdContainerName'))]",
-                                "[concat('https://', parameters('vmSaNames')[4], '.blob.core.windows.net/', variables('vhdContainerName'))]"
+                        
                             ],
                             "name": "[variables('webServerOsDiskName')]",
                             "caching": "ReadOnly",

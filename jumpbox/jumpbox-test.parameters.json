@@ -11,8 +11,8 @@
     "appName": {
       "value": "test"
     },
-    "vmSaNames": {
-      "value": [ "rxq7y6cf54rhetestvmsa0", "n6hovqf7lchb6testvmsa1", "m7gcksv2eehgmtestvmsa2", "fqb2zpfi4afh2testvmsa3", "6ekul3y3aeruytestvmsa4" ]
+    "jumpboxSaName": {
+      "value": "rxq7y6cf54rhetestvmsa0"
     },
     "vnetResourceGroup": {
       "value": "apulliam-test1"
@@ -26,8 +26,11 @@
     "diagSaName": {
       "value": "testdiagsa"
     },
-      "resourceLocation": {
-          "value": "East US"
-      }
+    "resourceLocation": {
+      "value": "East US"
+    },
+    "jumpboxSku": {
+      "value": "Standard_A1"
+    }
   }
 }

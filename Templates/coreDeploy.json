@@ -4,13 +4,11 @@
   "parameters": {
     "_artifactsLocation": {
       "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/apulliam/ModularARM/master"
+      "defaultValue": ""
     },
     "_artifactsLocationSasToken": {
       "type": "securestring",
       "defaultValue": ""
-      
- 
     },
     "resourceLocation": {
       "type": "string",
@@ -39,64 +37,31 @@
       "type": "string",
       "metadata": {
         "description": "Application name used as a prefix for ARM resource"
-      },
-      "defaultValue": "invs"
-    },
-    "diagSaType": {
-      "type": "string",
-      "metadata": {
-        "description": "Diagnostics storage account type"
-      },
-      "defaultValue": "Standard_LRS"
-    },
-    "vmSaType": {
-      "type": "string",
-      "metadata": {
-        "description": "Virtual machine storage account type"
-      },
-      "defaultValue": "Standard_LRS"
+      }
     },
     "vnetAddressRange": {
       "type": "string",
       "metadata": {
         "description": "The address range of the new VNET in CIDR format"
-      },
-      "defaultValue": "10.0.0.0/16"
+      }
     },
     "dcSubnetAddressRange": {
       "type": "string",
       "metadata": {
         "description": "The address range of the Domain Controller subnet in the new VNET"
-      },
-      "defaultValue": "10.0.0.0/24"
+      }
     },
     "feSubnetAddressRange": {
       "type": "string",
       "metadata": {
         "description": "The address range of the Front End subnet in the new VNET"
-      },
-      "defaultValue": "10.0.1.0/24"
+      }
     },
     "dbSubnetAddressRange": {
       "type": "string",
       "metadata": {
         "description": "The address range of the Database subnet in the new VNET"
-      },
-      "defaultValue": "10.0.2.0/24"
-    },
-    "pdcName": {
-      "type": "string",
-      "metadata": {
-        "description": "The computer name of the Primary Domain Controller"
-      },
-      "defaultValue": "[concat(parameters('appName'),'-pdc')]"
-    },
-    "bdcName": {
-      "type": "string",
-      "metadata": {
-        "description": "The computer name of Backup Domain Controller"
-      },
-      "defaultValue": "[concat(parameters('appName'),'-bdc')]"
+      }
     },
     "domainAdminUsername": {
       "type": "string",
@@ -109,13 +74,6 @@
       "metadata": {
         "description": "The password for the administrator account of the new domain"
       }
-    },
-    "dcSku": {
-      "type": "string",
-      "metadata": {
-        "description": "VM size of Domain Controllers."
-      },
-      "defaultValue": "Standard_A1"
     },
     "localAdminUsername": {
       "type": "string",
@@ -134,20 +92,57 @@
       "metadata": {
         "description": "The FQDN of the AD Domain created "
       }
+    },
+    "diagSaType": {
+      "type": "string",
+      "metadata": {
+        "description": "Diagnostics storage account type"
+      },
+      "defaultValue": "Standard_LRS"
+    },
+    "vmSaType": {
+      "type": "string",
+      "metadata": {
+        "description": "Virtual machine storage account type"
+      },
+      "defaultValue": "Standard_LRS"
+    },
+    "pdcName": {
+      "type": "string",
+      "metadata": {
+        "description": "The computer name of the Primary Domain Controller"
+      },
+      "defaultValue": "[concat(parameters('appName'),'-pdc')]"
+    },
+    "bdcName": {
+      "type": "string",
+      "metadata": {
+        "description": "The computer name of Backup Domain Controller"
+      },
+      "defaultValue": "[concat(parameters('appName'),'-bdc')]"
+    },
+    "dcSku": {
+      "type": "string",
+      "metadata": {
+        "description": "VM size of Domain Controllers."
+      },
+      "defaultValue": "Standard_A1"
     }
   },
   "variables": {
-      "storageDeploymentName":"[concat(deployment().name,'-storage')]",
-      "vnetDeploymentName":"[concat(deployment().name,'-vnet')]",
-      "jumpboxDeploymentName" :"[concat(deployment().name,'-jumpbox')]",
-      "domainDeploymentName" :"[concat(deployment().name,'-domain')]"
+    // prefix nested deployments with parent deployment name
+    // so all related deployments can be identified in Azure portals
+    "storageDeploymentName": "[concat(deployment().name,'-storage')]",
+    "vnetDeploymentName": "[concat(deployment().name,'-vnet')]",
+    "jumpboxDeploymentName": "[concat(deployment().name,'-jumpbox')]",
+    "domainDeploymentName": "[concat(deployment().name,'-domain')]"
   },
   "resources": [
     {
       "name": "[variables('storageDeploymentName')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
-      "dependsOn": [ ],
+      "dependsOn": [],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -174,7 +169,7 @@
       "name": "[variables('vnetDeploymentName')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
-      "dependsOn": [ ],
+      "dependsOn": [],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -207,7 +202,7 @@
       "name": "[variables('jumpboxDeploymentName')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
-      "dependsOn": [ ],
+      "dependsOn": [],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -249,7 +244,7 @@
       "name": "[variables('domainDeploymentName')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
-      "dependsOn": [ ],
+      "dependsOn": [],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -257,7 +252,6 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-
           "_artifactsLocation": {
             "value": "[parameters('_artifactsLocation')]"
           },
@@ -276,8 +270,17 @@
           "domainAdminPassword": {
             "value": "[parameters('domainAdminPassword')]"
           },
+          "pdcName": {
+            "value": "[parameters('pdcName')]"
+          },
+          "bdcName": {
+            "value": "[parameters('bdcName')]"
+          },
           "appName": {
             "value": "[parameters('appName')]"
+          },
+          "dcSku": {
+            "value": "[parameters('dcSku')]"
           },
           "vnetName": {
             "value": "[reference(variables('vnetDeploymentName')).outputs.vnetName.value]"
@@ -291,13 +294,12 @@
           "diagSaName": {
             "value": "[reference(variables('storageDeploymentName')).outputs.diagStorageAccountName.value]"
           },
-           "vnetResourceGroup": {
+          "vnetResourceGroup": {
             "value": "[resourceGroup().name]"
           }
         }
       }
     }
   ],
-  "outputs": {
-  }
+  "outputs": {}
 }

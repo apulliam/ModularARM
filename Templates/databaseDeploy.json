@@ -210,7 +210,8 @@
                 "description": "Virtual machine storage account type"
             },
             "defaultValue": "Standard_LRS"
-        }
+        },
+        
     },
     "variables": {
         "storageDeploymentName": "[concat(deployment().name,'-storage')]",

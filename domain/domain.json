@@ -49,22 +49,40 @@
                 "description": "Name of the subnet where the Domain Controllers should be deployed"
             }
         },
-        "subnetName": {
+        "domainSubnetName": {
             "type": "string",
             "metadata": {
                 "description": "Name of the subnet where the Domain Controllers should be deployed"
             }
         },
-        "vmSaNames": {
-            "type": "array",
-            "metadata": {
-                "description": "Array of existing storage account names to be used for VM's"
-            }
-        },
-        "diagSaName": {
+        "pdcInternalIpAddress": {
             "type": "string",
             "metadata": {
-                "description": "Existing storage account names to be used for diagnostics"
+                "description": "The internal IP address of Primary Domain Controller"
+            }
+        },
+        "bdcInternalIpAddress": {
+            "type": "string",
+            "metadata": {
+                "description": "The internal IP address of the Backup Domain Controller"
+            }
+        },
+        "pdcStorageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Existing storage account name to be used for the Pimary Domain Controller OS Disk"
+            }
+        },
+        "bdcStorageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Existing storage account name to be used for the Backup Domain Controller OS Disk"
+            }
+        },
+        "diagStorageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Existing storage account names to be used Primary and Backup Domain Controller diagnostic logging"
             }
         },
         "domainName": {
@@ -72,34 +90,6 @@
             "metadata": {
                 "description": "The FQDN of the AD Domain created "
             }
-        },
-        "pdcName": {
-            "type": "string",
-            "metadata": {
-                "description": "The computer name of the Primary Domain Controller"
-            },
-            "defaultValue": "[concat(parameters('appName'),'-pdc')]"
-        },
-        "bdcName": {
-            "type": "string",
-            "metadata": {
-                "description": "The computer name of Backup Domain Controller"
-            },
-            "defaultValue": "[concat(parameters('appName'),'-bdc')]"
-        },
-        "pdcInternalIpAddress": {
-            "type": "string",
-            "metadata": {
-                "description": "The internal IP address of Primary Domain Controller"
-            },
-            "defaultValue": "10.0.0.100"
-        },
-        "bdcInternalIpAddress": {
-            "type": "string",
-            "metadata": {
-                "description": "The internal IP address of the Backup Domain Controller"
-            },
-            "defaultValue": "10.0.0.101"
         },
         "domainAdminUsername": {
             "type": "string",
@@ -117,20 +107,35 @@
             "type": "string",
             "metadata": {
                 "description": "VM size of Domain Controllers."
+            }
+        },
+        "pdcComputerName": {
+            "type": "string",
+            "metadata": {
+                "description": "The computer name of the Primary Domain Controller"
             },
-            "defaultValue": "Standard_A1"
+            "defaultValue": null
+        },
+        "bdcComputerName": {
+            "type": "string",
+            "metadata": {
+                "description": "The computer name of Backup Domain Controller"
+            },
+            "defaultValue": null
         }
     },
     "variables": {
+        "pdcName": "[concat(parameters('appName'),'-pdc')]",
+        "bdcName": "[concat(parameters('appName'),'-bdc')]",
         "lookupVnetDeploymentName": "[concat(deployment().name,'-lookupVnet')]",
         "vnetID": "[resourceId(parameters('vnetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
         "dcAvailSetName": "[concat(parameters('appName'), '-dc-as')]",
-        "pdcNicName": "[concat(parameters('pdcName'),'-nic')]",
-        "bdcNicName": "[concat(parameters('bdcName'),'-nic')]",
-        "pdcOsDiskName": "[concat(parameters('pdcName'),'-osdisk')]",
-        "bdcOsDiskName": "[concat(parameters('bdcName'),'-osdisk')]",
-        "pdcDataDiskName": "[concat(parameters('pdcName'),'-data-disk1')]",
-        "bdcDataDiskName": "[concat(parameters('bdcName'),'-data-disk1')]",
+        "pdcNicName": "[concat(variables('pdcName'),'-nic')]",
+        "bdcNicName": "[concat(variables('bdcName'),'-nic')]",
+        "pdcOsDiskName": "[concat(variables('pdcName'),'-osdisk')]",
+        "bdcOsDiskName": "[concat(variables('bdcName'),'-osdisk')]",
+        "pdcDataDiskName": "[concat(variables('pdcName'),'-data-disk1')]",
+        "bdcDataDiskName": "[concat(variables('bdcName'),'-data-disk1')]",
         "dcVhdContainerName": "[concat(parameters('appName'), '-dc-vhd')]",
         "osType": {
             "publisher": "MicrosoftWindowsServer",
@@ -141,6 +146,7 @@
         "dcDataDiskSize": 1000
     },
     "resources": [
+        // create availability set for primary and backup domain controllers
         {
             "type": "Microsoft.Compute/availabilitySets",
             "name": "[variables('dcAvailSetName')]",
@@ -148,6 +154,7 @@
             "location": "[parameters('resourceLocation')]",
             "properties": {}
         },
+        // Create NIC for primary domain controller
         {
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[variables('pdcNicName')]",
@@ -162,17 +169,18 @@
                             "privateIPAllocationMethod": "Static",
                             "privateIPAddress": "[parameters('pdcInternalIpAddress')]",
                             "subnet": {
-                                "id": "[concat(variables('vnetID'), '/subnets/', parameters('subnetName'))]"
+                                "id": "[concat(variables('vnetID'), '/subnets/', parameters('domainSubnetName'))]"
                             }
                         }
                     }
                 ]
             }
         },
+        // Create VM for primary domain controller, and run DSC extension to setup VM as primary domain controller on new domain
         {
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[parameters('pdcName')]",
+            "name": "[variables('pdcName')]",
             "location": "[parameters('resourceLocation')]",
             "dependsOn": [
                 "[concat('Microsoft.Network/networkInterfaces/', variables('pdcNicName'))]",
@@ -186,7 +194,7 @@
                     "vmSize": "[parameters('dcSku')]"
                 },
                 "osProfile": {
-                    "computerName": "[parameters('pdcName')]",
+                    "computerName": "[parameters('pdcComputerName')]",
                     "adminUsername": "[parameters('domainAdminUsername')]",
                     "adminPassword": "[parameters('domainAdminPassword')]"
                 },
@@ -195,7 +203,7 @@
                     "osDisk": {
                         "name": "[variables('pdcOsDiskName')]",
                         "vhd": {
-                            "uri": "[concat('https://', parameters('vmSaNames')[0], '.blob.core.windows.net/', variables('dcVhdContainerName'),'/',variables('pdcOsDiskName'),'.vhd')]"
+                            "uri": "[concat('https://', parameters('pdcStorageAccountName'), '.blob.core.windows.net/', variables('dcVhdContainerName'),'/',variables('pdcOsDiskName'),'.vhd')]"
                         },
                         "caching": "ReadWrite",
                         "createOption": "FromImage"
@@ -203,7 +211,7 @@
                     "dataDisks": [
                         {
                             "vhd": {
-                                "uri": "[concat('http://',parameters('vmSaNames')[1],'.blob.core.windows.net/' , variables('dcVhdContainerName'),'/',variables('pdcDataDiskName'),'.vhd')]"
+                                "uri": "[concat('http://',parameters('pdcStorageAccountName'),'.blob.core.windows.net/' , variables('dcVhdContainerName'),'/',variables('pdcDataDiskName'),'.vhd')]"
                             },
                             "name": "[variables('pdcDataDiskName')]",
                             "caching": "None",
@@ -223,7 +231,7 @@
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
                         "enabled": "true",
-                        "storageUri": "[concat('http://',parameters('diagSaName'),'.blob.core.windows.net')]"
+                        "storageUri": "[concat('http://',parameters('diagStorageAccountName'),'.blob.core.windows.net')]"
                     }
                 }
             },
@@ -234,7 +242,7 @@
                     "location": "[parameters('resourceLocation')]",
                     "apiVersion": "2015-06-15",
                     "dependsOn": [
-                        "[concat('Microsoft.Compute/virtualMachines/', parameters('pdcName'))]"
+                        "[concat('Microsoft.Compute/virtualMachines/', variables('pdcName'))]"
                     ],
                     "tags": {
                         "displayName": "setupPDC"
@@ -265,13 +273,14 @@
                 }
             ]
         },
+        // Create backup domain controller NIC
         {
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[variables('bdcNicName')]",
             "location": "[parameters('resourceLocation')]",
             "apiVersion": "2015-06-15",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/',parameters('pdcName'),'/extensions/setupPDC')]"
+                "[concat('Microsoft.Compute/virtualMachines/',variables('pdcName'),'/extensions/setupPDC')]"
             ],
             "properties": {
                 "ipConfigurations": [
@@ -281,7 +290,7 @@
                             "privateIPAllocationMethod": "Static",
                             "privateIPAddress": "[parameters('bdcInternalIpAddress')]",
                             "subnet": {
-                                "id": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]"
+                                "id": "[concat(variables('vnetID'),'/subnets/',parameters('domainSubnetName'))]"
                             }
                         }
                     }
@@ -293,10 +302,11 @@
                 }
             }
         },
+        // create VM for backup domain controller and run DSC extension to setup VM as backup domain controller 
         {
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[parameters('bdcName')]",
+            "name": "[variables('bdcName')]",
             "location": "[parameters('resourceLocation')]",
             "dependsOn": [
                 "[concat('Microsoft.Network/networkInterfaces/', variables('bdcNicName'))]",
@@ -310,7 +320,7 @@
                     "vmSize": "[parameters('dcSku')]"
                 },
                 "osProfile": {
-                    "computerName": "[parameters('bdcName')]",
+                    "computerName": "[parameters('bdcComputerName')]",
                     "adminUsername": "[parameters('domainAdminUsername')]",
                     "adminPassword": "[parameters('domainAdminPassword')]"
                 },
@@ -319,7 +329,7 @@
                     "osDisk": {
                         "name": "[variables('bdcOsDiskName')]",
                         "vhd": {
-                            "uri": "[concat('https://', parameters('vmSaNames')[2], '.blob.core.windows.net/', variables('dcVhdContainerName'),'/',variables('bdcOsDiskName'),'.vhd')]"
+                            "uri": "[concat('https://', parameters('bdcStorageAccountName'), '.blob.core.windows.net/', variables('dcVhdContainerName'),'/',variables('bdcOsDiskName'),'.vhd')]"
                         },
                         "caching": "ReadWrite",
                         "createOption": "FromImage"
@@ -327,7 +337,7 @@
                     "dataDisks": [
                         {
                             "vhd": {
-                                "uri": "[concat('http://',parameters('vmSaNames')[3],'.blob.core.windows.net/' , variables('dcVhdContainerName'),'/',variables('bdcDataDiskName'),'.vhd')]"
+                                "uri": "[concat('http://',parameters('bdcStorageAccountName'),'.blob.core.windows.net/' , variables('dcVhdContainerName'),'/',variables('bdcDataDiskName'),'.vhd')]"
                             },
                             "name": "[variables('bdcDataDiskName')]",
                             "caching": "None",
@@ -347,7 +357,7 @@
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
                         "enabled": "true",
-                        "storageUri": "[concat('http://',parameters('diagSaName'),'.blob.core.windows.net')]"
+                        "storageUri": "[concat('http://',parameters('diagStorageAccountName'),'.blob.core.windows.net')]"
                     }
                 }
             },
@@ -358,7 +368,7 @@
                     "location": "[parameters('resourceLocation')]",
                     "apiVersion": "2015-06-15",
                     "dependsOn": [
-                        "[concat('Microsoft.Compute/virtualMachines/', parameters('bdcName'))]"
+                        "[concat('Microsoft.Compute/virtualMachines/', variables('bdcName'))]"
                     ],
                     "tags": {
                         "displayName": "setupBDC"
@@ -389,6 +399,7 @@
                 }
             ]
         },
+        // Lookup existing VNET in order to update DNS
         {
             "name": "[variables('lookupVnetDeploymentName')]",
             "type": "Microsoft.Resources/deployments",
@@ -397,7 +408,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'), '/domain/lookupVnet.json', parameters('_artifactsLocationSasToken'))]",
+                    "uri": "[concat(parameters('_artifactsLocation'), '/lookupVnet/lookupVnet.json', parameters('_artifactsLocationSasToken'))]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -410,13 +421,14 @@
                 }
             }
         },
+        // Update existing VNET to use primary and backup domain controllers for DNS
         {
             "type": "Microsoft.Network/virtualNetworks",
             "name": "[parameters('vnetName')]",
             "location": "[parameters('resourceLocation')]",
             "apiVersion": "2015-06-15",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/',parameters('bdcName'))]"
+                "[concat('Microsoft.Compute/virtualMachines/',variables('bdcName'))]"
             ],
             "properties": {
                 "addressSpace": "[reference(variables('lookupVnetDeploymentName')).outputs.vnet.value.addressSpace]",

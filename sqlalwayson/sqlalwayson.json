@@ -124,7 +124,7 @@
             "metadata": {
                 "description": "The Sql Server Version"
             },
-            "defaultValue": "SQL2014-WS2012R2"
+            "defaultValue": "SQL2016-WS2012R2"
         },
         "numberOfSqlVMDisks": {
             "type": "int",
@@ -373,7 +373,7 @@
             "apiVersion": "2015-06-15",
             "location": "[parameters('location')]",
             "properties": {
-                "platformFaultDomainCount": "2",
+                "platformFaultDomainCount": "3",
                 "platformUpdateDomainCount": "3"
             }
         },
@@ -414,7 +414,7 @@
                             "probe": {
                                 "id": "[variables('sqllbProbeID')]"
                             },
-                            "protocol": "Tcp",
+                            "protocol": "tcp",
                             "frontendPort": 1433,
                             "backendPort": 1433,
                             "enableFloatingIP": true
@@ -425,10 +425,10 @@
                     {
                         "name": "[variables('SQLAOProbe')]",
                         "properties": {
-                            "protocol": "Tcp",
+                            "protocol": "tcp",
                             "port": 59999,
-                            "intervalInSeconds": 5,
-                            "numberOfProbes": 2
+                            "intervalInSeconds": "5",
+                            "numberOfProbes": "2"
                         }
                     }
                 ]
@@ -661,7 +661,7 @@
                 "typeHandlerVersion": "2.14",
                 "autoUpgradeMinorVersion": false,
                 "settings": {
-                    "modulesURL": "[concat(parameters('_artifactsLocation'), '/sqlalwayson/CreateFileShareWitness.ps1.zip')]",
+                    "modulesURL": "[concat(parameters('_artifactsLocation'), '/sqlalwayson/CreateFileShareWitness.ps1.zip'),parameters()]",
                     "configurationFunction": "CreateFileShareWitness.ps1\\CreateFileShareWitness",
                     "properties": {
                         "domainName": "[parameters('domainName')]",

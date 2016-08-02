@@ -43,7 +43,7 @@
       "metadata": {
         "description": "Virtual machine storage account type"
       },
-      "defaultValue": "Standard_LRS"
+      "defaultValue": "Premium_LRS"
     }
   },
   "variables": {

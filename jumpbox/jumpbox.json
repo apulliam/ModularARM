@@ -49,10 +49,10 @@
         "description": "Name of the subnet where the jumpbox should be deployed"
       }
     },
-    "vmSaNames": {
-      "type": "array",
+    "jumpboxSaName": {
+      "type": "string",
       "metadata": {
-        "description": "Array of existing storage account names to be used for VM's"
+        "description": "Existing storage account names to be used for Jumpbox"
       }
     },
     "diagSaName": {
@@ -158,7 +158,7 @@
           "osDisk": {
             "name": "[variables('jumpBoxOSDiskName')]",
             "vhd": {
-              "uri": "[concat('http://',parameters('vmSaNames')[2],'.blob.core.windows.net/',variables('jumpBoxVHDContainerName'),'/',variables('jumpBoxOSDiskName'),'.vhd')]"
+              "uri": "[concat('http://',parameters('jumpboxSaName'),'.blob.core.windows.net/',variables('jumpBoxVHDContainerName'),'/',variables('jumpBoxOSDiskName'),'.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -181,5 +181,10 @@
     }
   ],
   "outputs": {
+   
+"jumpboxPublicIp": {
+      "type": "object",
+      "value": "[reference(concat('Microsoft.Network/publicIPAddresses'),parameters('jumpBoxName')).ipAddress]"
+    }
   }
 }
