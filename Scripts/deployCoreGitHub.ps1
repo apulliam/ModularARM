@@ -1,4 +1,4 @@
-﻿$deploymentName="core"
+﻿#$deploymentName="core"
 $resourceGroupName="apulliam-core"
 $resourceGroupLocation = "East US"
 

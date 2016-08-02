@@ -1,4 +1,4 @@
-﻿$resourceGroupName="apulliam-database"
+﻿$resourceGroupName="apulliam-core"
 $resourceGroupLocation = "East US"
 $storageAccountName = "apulliamarmdeploy"
 $storageContainerName = $resourceGroupName + "-stageartifacts"

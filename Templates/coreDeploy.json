@@ -37,7 +37,26 @@
       "type": "string",
       "metadata": {
         "description": "Application name used as a prefix for ARM resource"
+<<<<<<< HEAD
       }
+=======
+      },
+      "defaultValue": "invs"
+    },
+    "diagSaType": {
+      "type": "string",
+      "metadata": {
+        "description": "Diagnostics storage account type"
+      },
+      "defaultValue": "Standard_LRS"
+    },
+    "vmSaType": {
+      "type": "string",
+      "metadata": {
+        "description": "Virtual machine storage account type"
+      },
+      "defaultValue": "Premium_LRS"
+>>>>>>> 45e8afe92ca2d6fcbd2dfbab983be4465ef6d3b0
     },
     "vnetAddressRange": {
       "type": "string",
@@ -75,6 +94,16 @@
         "description": "The password for the administrator account of the new domain"
       }
     },
+<<<<<<< HEAD
+=======
+    "dcSku": {
+      "type": "string",
+      "metadata": {
+        "description": "VM size of Domain Controllers."
+      },
+      "defaultValue": "Standard_DS1"
+    },
+>>>>>>> 45e8afe92ca2d6fcbd2dfbab983be4465ef6d3b0
     "localAdminUsername": {
       "type": "string",
       "metadata": {

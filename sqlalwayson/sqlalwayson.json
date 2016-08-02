@@ -84,61 +84,57 @@
             "type": "string",
             "metadata": {
                 "description": "The size of the SQL VMs Created"
-            },
-            "defaultValue": "Standard_DS1"
+            }
         },
         "witnessVMSize": {
             "type": "string",
             "metadata": {
                 "description": "The size of the Witness VM Created"
-            },
-            "defaultValue": "Standard_DS1"
+            }
         },
         "sqlLBIPAddress": {
             "type": "string",
             "metadata": {
                 "description": "The IP address of the new SQL ILB"
-            },
-            "defaultValue": "10.0.2.100"
+            }
         },
         "autoPatchingEnable": {
-            "type": "bool",
-            "defaultValue": true
+            "type": "bool"
         },
         "autoPatchingDay": {
             "type": "string",
             "metadata": {
                 "description": "The day of a week for auto patching"
-            },
-            "defaultValue": "Sunday"
+            }
         },
         "autoPatchingStartHour": {
             "type": "string",
             "metadata": {
                 "description": "The start hour of a day for auto patching"
-            },
-            "defaultValue": "2"
+            }
         },
         "sqlServerVersion": {
             "type": "string",
             "metadata": {
                 "description": "The Sql Server Version"
+<<<<<<< HEAD
             },
             "defaultValue": "SQL2016-WS2012R2"
+=======
+            }
+>>>>>>> 45e8afe92ca2d6fcbd2dfbab983be4465ef6d3b0
         },
         "numberOfSqlVMDisks": {
             "type": "int",
             "metadata": {
                 "description": "The number of data disks on each SQL Server VM"
-            },
-            "defaultValue": 2
+            }
         },
         "workloadType": {
             "type": "string",
             "metadata": {
                 "description": "The Sql VM work load type"
-            },
-            "defaultValue": "OLTP"
+            }
         },
         "pdcName": {
             "type": "string",
@@ -150,36 +146,31 @@
             "type": "string",
             "metadata": {
                 "description": "The prefix used for naming SQL Server instances"
-            },
-            "defaultValue": "[concat(parameters('deploymentPrefix'),'-sql')]"
+            }
         },
         "sqlwVMName": {
             "type": "string",
             "metadata": {
                 "description": "The computer name of the SQL Server witness"
-            },
-            "defaultValue": "[concat(parameters('deploymentPrefix'),'-fsw')]"
+            }
         },
         "sqlAOListenerName": {
             "type": "string",
             "metadata": {
                 "description": "The Sql AG Listener Name"
-            },
-            "defaultValue": "[concat(parameters('sqlVMName'),'-listener')]"
+            }
         },
         "sqlAOListenerPort": {
             "type": "string",
             "metadata": {
                 "description": "The Sql AG Listener port"
-            },
-            "defaultValue": "1433"
+            }
         },
         "sqlAOAGName": {
             "type": "string",
             "metadata": {
                 "description": "The Sql AlwaysOn Group Name"
-            },
-            "defaultValue": "[concat(parameters('sqlVMName'),'-aoag')]"
+            }
         },
         "vmSaNames": {
             "type": "array",
@@ -482,7 +473,13 @@
                             }
                         }
                     }
-                ]
+                ]//,
+                // "dnsSettings": {
+                //     "dnsServers": [
+                //         "10.0.0.4",
+                //         "10.0.0.5"
+                //     ]
+                // }
             }
         },
         {
@@ -658,7 +655,7 @@
             "properties": {
                 "publisher": "Microsoft.Powershell",
                 "type": "DSC",
-                "typeHandlerVersion": "2.14",
+                "typeHandlerVersion": "2.19",
                 "autoUpgradeMinorVersion": false,
                 "settings": {
                     "modulesURL": "[concat(parameters('_artifactsLocation'), '/sqlalwayson/CreateFileShareWitness.ps1.zip'),parameters()]",
@@ -755,7 +752,7 @@
             "properties": {
                 "publisher": "Microsoft.Powershell",
                 "type": "DSC",
-                "typeHandlerVersion": "2.14",
+                "typeHandlerVersion": "2.19",
                 "autoUpgradeMinorVersion": false,
                 "settings": {
                     "modulesURL": "[concat(parameters('_artifactsLocation'), '/sqlalwayson/PrepareAlwaysOnSqlServer.ps1.zip')]",
@@ -764,12 +761,12 @@
                         "domainName": "[parameters('domainName')]",
                         "sqlAlwaysOnEndpointName": "[variables('sqlAOEPName')]",
                         "adminCreds": {
-                            "userName": "[parameters('localAdminUsername')]",
-                            "password": "privateSettingsRef:localAdminPassword"
+                            "userName": "[parameters('domainAdminUsername')]",
+                            "password": "privateSettingsRef:adminPassword"
                         },
                         "sqlServiceCreds": {
                             "userName": "[parameters('sqlServerServiceAccountUserName')]",
-                            "password": "privateSettingsRef:SqlServerServiceAccountPassword"
+                            "password": "privateSettingsRef:sqlServerServiceAccountPassword"
                         },
                         "NumberOfDisks": "[parameters('numberOfSqlVMDisks')]",
                         "WorkloadType": "[parameters('workloadType')]"
@@ -777,7 +774,7 @@
                 },
                 "protectedSettings": {
                     "items": {
-                        "localAdminPassword": "[parameters('localAdminPassword')]",
+                        "adminPassword": "[parameters('domainAdminPassword')]",
                         "sqlServerServiceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]"
                     }
                 }
@@ -794,7 +791,7 @@
             "properties": {
                 "publisher": "Microsoft.Powershell",
                 "type": "DSC",
-                "typeHandlerVersion": "2.14",
+                "typeHandlerVersion": "2.19",
                 "autoUpgradeMinorVersion": false,
                 "settings": {
                     "modulesURL": "[concat(parameters('_artifactsLocation'), '/sqlalwayson/CreateFailoverCluster.ps1.zip')]",
@@ -818,8 +815,8 @@
                         "secondaryReplica": "[concat(parameters('sqlVMName'),'0')]",
                         "dnsServerName": "[parameters('pdcName')]",
                         "adminCreds": {
-                            "userName": "[parameters('localAdminUsername')]",
-                            "password": "privateSettingsRef:localAdminPassword"
+                            "userName": "[parameters('domainAdminUsername')]",
+                            "password": "privateSettingsRef:adminPassword"
                         },
                         "sqlServiceCreds": {
                             "userName": "[parameters('sqlServerServiceAccountUserName')]",
@@ -835,7 +832,7 @@
                 },
                 "protectedSettings": {
                     "items": {
-                        "localAdminPassword": "[parameters('localAdminPassword')]",
+                        "adminPassword": "[parameters('domainAdminPassword')]",
                         "sqlServerServiceAccountPassword": "[parameters('sqlServerServiceAccountPassword')]",
                         "sqlAuthPassword": "[parameters('sqlServerServiceAccountPassword')]"
                     }

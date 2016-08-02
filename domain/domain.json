@@ -121,7 +121,11 @@
             "metadata": {
                 "description": "The computer name of Backup Domain Controller"
             },
+<<<<<<< HEAD
             "defaultValue": null
+=======
+            "defaultValue": "Standard_DS1"
+>>>>>>> 45e8afe92ca2d6fcbd2dfbab983be4465ef6d3b0
         }
     },
     "variables": {

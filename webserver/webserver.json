@@ -78,7 +78,7 @@
         },
         "webServerSku": {
             "type": "string",
-            "defaultValue": "Standard_A1",
+            "defaultValue": "Standard_DS1",
             "metadata": {
                 "description": "Size of VMs in the web server Scale Set."
             }
