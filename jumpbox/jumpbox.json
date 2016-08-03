@@ -28,7 +28,7 @@
     "appName": {
       "type": "string",
       "metadata": {
-        "description": "Application name used as a prefix for ARM resources"
+        "description": "Application name used as a prefix for jumpbox resources"
       }
     },
     "vnetResourceGroup": {
@@ -43,7 +43,7 @@
         "description": "Name of an existing VNET where the jumpbox should be deployed"
       }
     },
-    "subnetName": {
+    "jumpboxSubnetName": {
       "type": "string",
       "metadata": {
         "description": "Name of the subnet where the jumpbox should be deployed"
@@ -52,13 +52,13 @@
     "jumpboxSaName": {
       "type": "string",
       "metadata": {
-        "description": "Existing storage account names to be used for Jumpbox"
+        "description": "Existing storage account to be used for jumpbox OS disk"
       }
     },
     "diagSaName": {
       "type": "string",
       "metadata": {
-        "description": "Existing storage account names to be used for diagnostics"
+        "description": "Existing storage account to be used for jumpbox diagnostics"
       }
     },
     "jumpboxName": {
@@ -129,7 +129,7 @@
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('jumpBoxPublicIPAddressName'))]"
               },
               "subnet": {
-                "id": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]"
+                "id": "[concat(variables('vnetID'),'/subnets/',parameters('jumpboxSubnetName'))]"
               }
             }
           }
