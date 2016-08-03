@@ -183,8 +183,8 @@
   "outputs": {
    
 "jumpboxPublicIp": {
-      "type": "object",
-      "value": "[reference(concat('Microsoft.Network/publicIPAddresses'),parameters('jumpBoxName')).ipAddress]"
+      "type": "string",
+      "value": "[reference(variables('jumpBoxPublicIPAddressName')).ipAddress]"
     }
   }
 }
