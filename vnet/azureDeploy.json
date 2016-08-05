@@ -1,0 +1,156 @@
+﻿{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceLocation": {
+            "type": "string",
+            "allowedValues": [
+                "East US",
+                "East US 2",
+                "West US",
+                "Central US",
+                "South Central US",
+                "North Central US",
+                "North Europe",
+                "West Europe",
+                "Southeast Asia",
+                "East Asia",
+                "Japan West",
+                "Japan East",
+                "Brazil South",
+                "Australia East",
+                "Australia Southeast"
+            ],
+            "metadata": {
+                "description": "Azure region where all resources will be deployed. This is distinct from resource group location."
+            }
+        },
+        "appName": {
+            "type": "string"
+        },
+        "vnetAddressRange": {
+            "type": "string",
+            "metadata": {
+                "description": "The address range of the new VNET in CIDR format"
+            },
+            "defaultValue": "10.0.0.0/16"
+        },
+        "dcSubnetAddressRange": {
+            "type": "string",
+            "metadata": {
+                "description": "The address range of the Domain Controller subnet in the new VNET"
+            },
+            "defaultValue": "10.0.0.0/24"
+        },
+        "webSubnetAddressRange": {
+            "type": "string",
+            "metadata": {
+                "description": "The address range of the Web Server subnet in the new VNET"
+            },
+            "defaultValue": "10.0.1.0/24"
+        },
+        "apiSubnetAddressRange": {
+            "type": "string",
+            "metadata": {
+                "description": "The address range of the Web API Server subnet in the new VNET"
+            },
+            "defaultValue": "10.0.2.0/24"
+        },
+        "dbSubnetAddressRange": {
+            "type": "string",
+            "metadata": {
+                "description": "The address range of the database subnet in the new VNET"
+            },
+            "defaultValue": "10.0.3.0/24"
+        },
+        "jumpSubnetAddressRange": {
+            "type": "string",
+            "metadata": {
+                "description": "The address range of the jumpbox subnet in the new VNET"
+            },
+            "defaultValue": "10.0.250.0/24"
+        }
+    },
+    "variables": {
+        "vnetName": "[concat(parameters('appName'), '-vnet')]",
+        "dcSubnetName": "[concat(parameters('appName'), '-dc')]",
+        "webSubnetName": "[concat(parameters('appName'), '-web')]",
+        "apiSubnetName": "[concat(parameters('appName'), '-api')]",
+        "dbSubnetName": "[concat(parameters('appName'), '-db')]",
+        "jumpSubnetName": "[concat(parameters('appName'), '-jump')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[variables('vnetName')]",
+            "location": "[parameters('resourceLocation')]",
+            "apiVersion": "2015-06-15",
+            "dependsOn": [],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('vnetAddressRange')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('dcSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('dcSubnetAddressRange')]"
+                        }
+                    },
+                    {
+                        "name": "[variables('webSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('webSubnetAddressRange')]"
+                        }
+                    },
+                    {
+                        "name": "[variables('apiSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('apiSubnetAddressRange')]"
+                        }
+                    },
+                    {
+                        "name": "[variables('dbSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('dbSubnetAddressRange')]"
+                        }
+                    },
+                    {
+                        "name": "[variables('jumpSubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('jumpSubnetAddressRange')]"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {
+        "vnetName": {
+            "type": "string",
+            "value": "[variables('vnetName')]"
+        },
+        "dcSubnetName": {
+            "type": "string",
+            "value": "[variables('dcSubnetName')]"
+        },
+        "webSubnetName": {
+            "type": "string",
+            "value": "[variables('webSubnetName')]"
+        },
+        "apiSubnetName": {
+            "type": "string",
+            "value": "[variables('apiSubnetName')]"
+        },
+        "dbSubnetName": {
+            "type": "string",
+            "value": "[variables('dbSubnetName')]"
+        },
+        "jumpSubnetName": {
+            "type": "string",
+            "value": "[variables('jumpSubnetName')]"
+        }
+    }
+}

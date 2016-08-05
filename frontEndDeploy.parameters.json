@@ -2,21 +2,23 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-     
         "appName": {
-            "value": "invs"
+            "value": "test"
         },
         "resourceLocation": {
             "value": "East US"
         },
         "vnetResourceGroup": {
-           "value": "apulliam-core"
+            "value": "apulliam-core"
         },
         "vnetName": {
             "value": "test-vnet"
         },
-        "subnetName": {
-            "value": "test-fe"
+        "webSubnetName": {
+            "value": "test-web"
+        },
+        "apiSubnetName": {
+            "value": "test-api"
         },
         "webServerCount": {
             "value": 2
@@ -38,6 +40,15 @@
         },
         "domainJoinPassword": {
             "value": "test@me1"
+        },
+        "webDnsName": {
+            "value": "test789"
+        },
+        "apiDnsName": {
+            "value": "test456"
+        },
+        "webApiInternalLoadBalancerIp": {
+            "value": "10.0.2.250"
         }
     }
 }

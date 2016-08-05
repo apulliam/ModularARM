@@ -6,8 +6,7 @@
             "type": "string",
             "metadata": {
                 "description": "Application name used as a prefix for ARM resources"
-            },
-            "defaultValue": "invs"
+            }
         },
         "resourceLocation": {
             "type": "string",
@@ -44,36 +43,29 @@
                 "description": "Name of an existing VNET where the web servers should be deployed"
             }
         },
-        "subnetName": {
+        "webSubnetName": {
             "type": "string",
             "metadata": {
-                "description": "Name of the subnet where the jumpbox should be deployed"
+                "description": "Name of the subnet where the web servers should be deployed"
             }
         },
         "localAdminPassword": {
             "type": "securestring",
             "metadata": {
-                "description": "Local Administrator password on all Front End VMs."
+                "description": "Local Administrator password on all web server VMs."
             }
         },
         "localAdminUsername": {
             "type": "string",
             "metadata": {
-                "description": "Local Administrator username on all Front End VMs."
+                "description": "Local Administrator username on all web server VMs."
             }
         },
-         "azureDnsName": {
+        "webDnsName": {
             "type": "string",
             "defaultValue": "[concat(parameters('appName'),'-web')]",
             "metadata": {
                 "description": "Azure DNS name for public endpoint"
-            }
-        },
-        "webServerName": {
-            "type": "string",
-            "defaultValue": "[concat(parameters('appName'),'-web')]",
-            "metadata": {
-                "description": "Base name of VMs in the web server Scale Set."
             }
         },
         "webServerSku": {
@@ -109,13 +101,13 @@
                 "description": "The password of the user authorized to join machine to the domain"
             }
         },
-        "vmSaNames": {
+        "vmStorageAccountNames": {
             "type": "array",
             "metadata": {
                 "description": "Array of existing storage account names to be used for VM's"
             }
         },
-        "diagSaName": {
+        "diagStorageAccountName": {
             "type": "string",
             "metadata": {
                 "description": "Existing storage account names to be used for diagnostics"
@@ -124,11 +116,12 @@
     },
     "variables": {
         "vnetID": "[resourceId(parameters('vnetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
-        "webServerLoadBalancerName": "[concat(parameters('webServerName'), '-lb')]",
+        "webServerPrefix": "[concat(parameters('appName'),'-web')]",
+        "webServerLoadBalancerName": "[concat(variables('webServerPrefix'), '-lb')]",
         "webServerLoadBalancerBackend": "[concat(variables('webServerLoadBalancerName'), '-backend')]",
-        "webServerOsDiskName": "[concat(parameters('webServerName'), '-osdisk')]",
-        "webServerPublicIAddressName": "[concat(parameters('webServerName'), '-pip')]",
-        "vhdContainerName": "[concat(parameters('webServerName'), '-vhd')]",
+        "webServerOsDiskName": "[concat(variables('webServerPrefix'), '-osdisk')]",
+        "webServerPublicIAddressName": "[concat(variables('webServerPrefix'), '-pip')]",
+        "vhdContainerName": "[concat(variables('webServerPrefix'), '-vhd')]",
         "osType": {
             "publisher": "MicrosoftWindowsServer",
             "offer": "WindowsServer",
@@ -138,11 +131,13 @@
         "domainAndUsername": "[concat(parameters('domainName'),'\\', parameters('domainJoinUsername'))]",
         "ouPath": "",
         "domainJoinOptions": 3,
-                "[concat('https://', parameters('vmSaNames')[0], '.blob.core.windows.net/', variables('vhdContainerName'))]",
-                                "[concat('https://', parameters('vmSaNames')[1], '.blob.core.windows.net/', variables('vhdContainerName'))]",
-                                "[concat('https://', parameters('vmSaNames')[2], '.blob.core.windows.net/', variables('vhdContainerName'))]",
-                                "[concat('https://', parameters('vmSaNames')[3], '.blob.core.windows.net/', variables('vhdContainerName'))]",
-                                "[concat('https://', parameters('vmSaNames')[4], '.blob.core.windows.net/', variables('vhdContainerName'))]"
+        "vhdContainers": [
+            "[concat('https://', parameters('vmStorageAccountNames')[0], '.blob.core.windows.net/', variables('vhdContainerName'))]",
+            "[concat('https://', parameters('vmStorageAccountNames')[1], '.blob.core.windows.net/', variables('vhdContainerName'))]",
+            "[concat('https://', parameters('vmStorageAccountNames')[2], '.blob.core.windows.net/', variables('vhdContainerName'))]",
+            "[concat('https://', parameters('vmStorageAccountNames')[3], '.blob.core.windows.net/', variables('vhdContainerName'))]",
+            "[concat('https://', parameters('vmStorageAccountNames')[4], '.blob.core.windows.net/', variables('vhdContainerName'))]"
+        ]
     },
     "resources": [
         {
@@ -153,7 +148,7 @@
             "properties": {
                 "publicIPAllocationMethod": "Dynamic",
                 "dnsSettings": {
-                    "domainNameLabel": "[parameters('azureDnsName')]"
+                    "domainNameLabel": "[parameters('webDnsName')]"
                 }
             }
         },
@@ -185,16 +180,11 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachineScaleSets",
-            "name": "[parameters('webServerName')]",
+            "name": "[variables('webServerPrefix')]",
             "location": "[parameters('resourceLocation')]",
             "apiVersion": "2015-06-15",
-            "tags": {
-                "displayName": "VMScaleSet"
-            },
             "dependsOn": [
-                //"storageLoop",
                 "[concat('Microsoft.Network/loadBalancers/', variables('webServerLoadBalancerName'))]"
-                //"[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
             ],
             "sku": {
                 "name": "[parameters('webServerSku')]",
@@ -208,9 +198,7 @@
                 "virtualMachineProfile": {
                     "storageProfile": {
                         "osDisk": {
-                            "vhdContainers": [
-                        
-                            ],
+                            "vhdContainers": "[variables('vhdContainers')]",
                             "name": "[variables('webServerOsDiskName')]",
                             "caching": "ReadOnly",
                             "createOption": "FromImage"
@@ -218,22 +206,22 @@
                         "imageReference": "[variables('osType')]"
                     },
                     "osProfile": {
-                        "computerNamePrefix": "[parameters('webServerName')]",
+                        "computerNamePrefix": "[variables('webServerPrefix')]",
                         "adminUsername": "[parameters('localAdminUsername')]",
                         "adminPassword": "[parameters('localAdminPassword')]"
                     },
                     "networkProfile": {
                         "networkInterfaceConfigurations": [
                             {
-                                "name": "[concat(parameters('webServerName'), '-nic')]",
+                                "name": "[concat(variables('webServerPrefix'), '-nic')]",
                                 "properties": {
                                     "primary": true,
                                     "ipConfigurations": [
                                         {
-                                            "name": "[concat(parameters('webServerName'), '-ipconfig')]",
+                                            "name": "[concat(variables('webServerPrefix'), '-ipconfig')]",
                                             "properties": {
                                                 "subnet": {
-                                                    "id": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]"
+                                                    "id": "[concat(variables('vnetID'),'/subnets/',parameters('webSubnetName'))]"
                                                 },
                                                 "loadBalancerBackendAddressPools": [
                                                     {

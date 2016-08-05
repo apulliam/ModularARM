@@ -49,13 +49,13 @@
         "description": "Name of the subnet where the jumpbox should be deployed"
       }
     },
-    "jumpboxSaName": {
+    "jumpboxStorageAccountName": {
       "type": "string",
       "metadata": {
         "description": "Existing storage account to be used for jumpbox OS disk"
       }
     },
-    "diagSaName": {
+    "diagStorageAccountName": {
       "type": "string",
       "metadata": {
         "description": "Existing storage account to be used for jumpbox diagnostics"
@@ -90,10 +90,10 @@
   },
   "variables": {
     "vnetID": "[resourceId(parameters('vnetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
-    "jumpBoxPublicIPAddressName": "[concat(parameters('jumpBoxName'),  '-pip')]",
-    "jumpBoxOSDiskName": "[concat(parameters('jumpBoxName'), '-osdisk')]",
-    "jumpBoxVHDContainerName": "[concat(parameters('jumpBoxName'), '-vhd')]",
-    "jumpBoxNicName": "[concat(parameters('jumpBoxName'), '-nic')]",
+    "jumpboxPublicIPAddressName": "[concat(parameters('jumpBoxName'),  '-pip')]",
+    "jumpboxOSDiskName": "[concat(parameters('jumpBoxName'), '-osdisk')]",
+    "jumpboxVHDContainerName": "[concat(parameters('jumpBoxName'), '-vhd')]",
+    "jumpboxNicName": "[concat(parameters('jumpBoxName'), '-nic')]",
     "osType": {
       "publisher": "MicrosoftWindowsServer",
       "offer": "WindowsServer",
@@ -104,7 +104,7 @@
   "resources": [
     {
       "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[variables('jumpBoxPublicIPAddressName')]",
+      "name": "[variables('jumpboxPublicIPAddressName')]",
       "location": "[parameters('resourceLocation')]",
       "apiVersion": "2015-06-15",
       "properties": {
@@ -113,11 +113,11 @@
     },
     {
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[variables('jumpBoxNicName')]",
+      "name": "[variables('jumpboxNicName')]",
       "location": "[parameters('resourceLocation')]",
       "apiVersion": "2015-06-15",
       "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/', variables('jumpBoxPublicIPAddressName'))]"
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('jumpboxPublicIPAddressName'))]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -126,7 +126,7 @@
             "properties": {
               "privateIPAllocationMethod": "Dynamic",
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('jumpBoxPublicIPAddressName'))]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('jumpboxPublicIPAddressName'))]"
               },
               "subnet": {
                 "id": "[concat(variables('vnetID'),'/subnets/',parameters('jumpboxSubnetName'))]"
@@ -142,7 +142,7 @@
       "location": "[parameters('resourceLocation')]",
       "apiVersion": "2015-06-15",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkInterfaces/', variables('jumpBoxNicName'))]"
+        "[concat('Microsoft.Network/networkInterfaces/', variables('jumpboxNicName'))]"
       ],
       "properties": {
         "hardwareProfile": {
@@ -156,9 +156,9 @@
         "storageProfile": {
           "imageReference": "[variables('osType')]",
           "osDisk": {
-            "name": "[variables('jumpBoxOSDiskName')]",
+            "name": "[variables('jumpboxOSDiskName')]",
             "vhd": {
-              "uri": "[concat('http://',parameters('jumpboxSaName'),'.blob.core.windows.net/',variables('jumpBoxVHDContainerName'),'/',variables('jumpBoxOSDiskName'),'.vhd')]"
+              "uri": "[concat('http://',parameters('jumpboxStorageAccountName'),'.blob.core.windows.net/',variables('jumpboxVHDContainerName'),'/',variables('jumpboxOSDiskName'),'.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -167,14 +167,14 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('jumpBoxNicName'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('jumpboxNicName'))]"
             }
           ]
         },
         "diagnosticsProfile": {
           "bootDiagnostics": {
             "enabled": "true",
-            "storageUri": "[concat('http://',parameters('diagSaName'),'.blob.core.windows.net')]"
+            "storageUri": "[concat('http://',parameters('diagStorageAccountName'),'.blob.core.windows.net')]"
           }
         }
       }
@@ -184,7 +184,7 @@
    
 "jumpboxPublicIp": {
       "type": "string",
-      "value": "[reference(variables('jumpBoxPublicIPAddressName')).ipAddress]"
+      "value": "[reference(variables('jumpboxPublicIPAddressName')).ipAddress]"
     }
   }
 }

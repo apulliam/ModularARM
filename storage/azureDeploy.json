@@ -81,7 +81,6 @@
         "accountType": "[parameters('vmSaType')]"
       }
     }
-
   ],
   "outputs": {
     "vmStorageAccountNames": {
@@ -93,4 +92,4 @@
       "value": "[variables('diagSaName')]"
     }
   }
-} 
+}

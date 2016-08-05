@@ -6,27 +6,27 @@
             "value": "test"
         },
         "azureDnsName": {
-            "value": "test789"
+            "value": "test456"
         },
         "vnetResourceGroup": {
-            "value": "apulliam-test"
+            "value": "apulliam-core"
         },
         "vnetName": {
             "value": "test-vnet"
         },
-        "subnetName": {
-            "value": "test-fe"
+        "apiSubnetName": {
+            "value": "test-api"
         },
-        "vmSaNames": {
+        "vmStorageAccountNames": {
             "value": [
-                "56lhhyxcsjjlwtestvmsa0",
-                "kbi2ky5ajk5iqtestvmsa1",
-                "4sgfltplrof6stestvmsa2",
-                "tnzz7makxaczitestvmsa3",
-                "bpbmzdd42qisetestvmsa4"
+                "oyo4a2cff3apqtestvmsa0",
+                "x6xjobxnmjrjmtestvmsa1",
+                "gwws5ropi6wiatestvmsa2",
+                "db5iuzcz57usqtestvmsa3",
+                "66klfb7h27zcatestvmsa4"
             ]
         },
-        "diagSaName": {
+        "diagStorageAccountName": {
             "value": "testdiagsa"
         },
         "domainName": {
@@ -46,6 +46,9 @@
         },
         "domainJoinPassword": {
             "value": "test@me1"
+        },
+        "internalLoadBalancerAddress" : {
+            "value": "10.0.2.250"
         }
     }
 }

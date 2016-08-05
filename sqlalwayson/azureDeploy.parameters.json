@@ -1,0 +1,100 @@
+﻿{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "_artifactsLocation": {
+            "value": "https://raw.githubusercontent.com/apulliam/ModularARM/master/"
+        },
+        "_artifactsLocationSasToken": {
+            "value": ""
+        },
+        "deploymentPrefix": {
+            "value": "test"
+        },
+        "location": {
+            "value": "East US"
+        },
+        "localAdminUsername": {
+            "value": "testme"
+        },
+        "localAdminPassword": {
+            "value": "test@me1"
+        },
+        "domainName": {
+            "value": "test"
+        },
+        "domainAdminUsername": {
+            "value": "testme"
+        },
+        "domainAdminPassword": {
+            "value": "test@me1"
+        },
+        "sqlServerServiceAccountUserName": {
+            "value": "sqltest"
+        },
+        "sqlServerServiceAccountPassword": {
+            "value": "test@me1"
+        },
+        "vnetResourceGroup": {
+            "value": "apulliam-core"
+        },
+        "vnetName": {
+            "value": "test-vnet"
+        },
+        "dbSubnetName": {
+            "value": "test-db"
+        },
+        "pdcName": {
+            "value": "test-pdc"
+        },
+        "vmStorageAccountNames": {
+            "value": []
+                
+        },
+        "diagStorageAccountName": {
+            "value": ""
+        },
+        "sqlVMSize": {
+            "value": ""
+        },
+        "sqlVMName": {
+            "value": ""
+        },
+        "sqlwVMName": {
+            "value": ""
+        },
+        "workloadType": {
+            "value": ""
+        },
+        "witnessVMSize": {
+            "value": ""
+        },
+        "sqlServerVersion": {
+            "value": ""
+        },
+        "sqlAOListenerName": {
+            "value": ""
+        },
+        "sqlAOAGName": {
+            "value": ""
+        },
+        "sqlAOListenerPort": {
+            "value": ""
+        },
+        "numberOfSqlVMDisks": {
+            "value": ""
+        },
+        "sqlLBIPAddress": {
+            "value": ""
+        },
+        "autoPatchingEnable": {
+            "value": ""
+        },
+        "autoPatchingDay": {
+            "value": ""
+        },
+        "autoPatchingStartHour": {
+            "value": ""
+        }
+    }
+}

@@ -12,10 +12,10 @@
       "value": "test"
     },
     "jumpboxSaName": {
-      "value": "6ekul3y3aeruytestvmsa4"
+      "value": "66klfb7h27zcatestvmsa4"
     },
     "vnetResourceGroup": {
-      "value": "apulliam-test1"
+      "value": "apulliam-core"
     },
     "vnetName": {
       "value": "test-vnet"
@@ -24,7 +24,7 @@
       "value": "test-jump"
     },
     "diagSaName": {
-      "value": "4diugidpqnkactestdiagsa"
+      "value": "cblem7ccvvvk4testdiagsa"
     },
     "resourceLocation": {
       "value": "East US"

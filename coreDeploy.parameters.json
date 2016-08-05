@@ -23,26 +23,13 @@
         "domainName": {
             "value": "test.com"
         },
-        "vnetAddressRange": {
-            "value": "10.0.0.0/16"
-        },
-        "dcSubnetAddressRange": {
-            "value": "10.0.0.0/24"
-        },
-        "feSubnetAddressRange": {
-            "value": "10.0.1.0/24"
-        },
-        "dbSubnetAddressRange": {
-            "value": "10.0.2.0/24"
-        },
+      
         "pdcInternalIpAddress": {
             "value": "10.0.0.100"
         },
         "bdcInternalIpAddress": {
             "value": "10.0.0.101"
-        },
-        "dcSku": {
-            "value": "Standard_A1"
         }
+      
     }
 }

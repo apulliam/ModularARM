@@ -2,12 +2,6 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "_artifactsLocation": {
-            "value": "https://raw.githubusercontent.com/apulliam/ModularARM/master"
-        },
-        "_artifactsLocationSasToken": {
-            "value": ""
-        },
         "domainName": {
             "value": "test.com"
         },
@@ -24,22 +18,19 @@
             "value": "test-vnet"
         },
         "vnetResourceGroup": {
-            "value": "apulliam-test1"
+            "value": "apulliam-core"
         },
-        "vmSaNames": {
-            "value": [
-                "rxq7y6cf54rhetestvmsa0",
-                "n6hovqf7lchb6testvmsa1",
-                "m7gcksv2eehgmtestvmsa2",
-                "fqb2zpfi4afh2testvmsa3",
-                "6ekul3y3aeruytestvmsa4"
-            ]
+        "pdcStorageAccountName": {
+            "value": "oyo4a2cff3apqtestvmsa0"
         },
-        "subnetName": {
+        "bdcStorageAccountName": {
+            "value": "x6xjobxnmjrjmtestvmsa1"
+        },
+        "domainSubnetName": {
             "value": "test-dc"
         },
-        "diagSaName": {
-            "value": "testdiagsa"
+        "diagStorageAccountName": {
+            "value": "cblem7ccvvvk4testdiagsa"
         },
         "resourceLocation": {
             "value": "East US"
@@ -49,9 +40,6 @@
         },
         "bdcInternalIpAddress": {
             "value": "10.0.0.101"
-        },
-        "dcSku": {
-            "value": "Standard_A1"
         }
     }
 }

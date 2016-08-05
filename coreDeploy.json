@@ -4,7 +4,7 @@
   "parameters": {
     "_artifactsLocation": {
       "type": "string",
-      "defaultValue": ""
+      "defaultValue": "https://raw.githubusercontent.com/apulliam/ModularARM/master"
     },
     "_artifactsLocationSasToken": {
       "type": "securestring",
@@ -37,11 +37,7 @@
       "type": "string",
       "metadata": {
         "description": "Application name used as a prefix for ARM resource"
-<<<<<<< HEAD
       }
-=======
-      },
-      "defaultValue": "invs"
     },
     "diagSaType": {
       "type": "string",
@@ -56,31 +52,48 @@
         "description": "Virtual machine storage account type"
       },
       "defaultValue": "Premium_LRS"
->>>>>>> 45e8afe92ca2d6fcbd2dfbab983be4465ef6d3b0
     },
     "vnetAddressRange": {
       "type": "string",
       "metadata": {
         "description": "The address range of the new VNET in CIDR format"
-      }
+      },
+      "defaultValue": "10.0.0.0/16"
     },
     "dcSubnetAddressRange": {
       "type": "string",
       "metadata": {
         "description": "The address range of the Domain Controller subnet in the new VNET"
-      }
+      },
+      "defaultValue": "10.0.0.0/24"
     },
-    "feSubnetAddressRange": {
+    "webSubnetAddressRange": {
       "type": "string",
       "metadata": {
-        "description": "The address range of the Front End subnet in the new VNET"
-      }
+        "description": "The address range of the Web Server subnet in the new VNET"
+      },
+      "defaultValue": "10.0.1.0/24"
+    },
+    "apiSubnetAddressRange": {
+      "type": "string",
+      "metadata": {
+        "description": "The address range of the Web API Server subnet in the new VNET"
+      },
+      "defaultValue": "10.0.2.0/24"
     },
     "dbSubnetAddressRange": {
       "type": "string",
       "metadata": {
-        "description": "The address range of the Database subnet in the new VNET"
-      }
+        "description": "The address range of the database subnet in the new VNET"
+      },
+      "defaultValue": "10.0.3.0/24"
+    },
+    "jumpSubnetAddressRange": {
+      "type": "string",
+      "metadata": {
+        "description": "The address range of the jumpbox subnet in the new VNET"
+      },
+      "defaultValue": "10.0.250.0/24"
     },
     "domainAdminUsername": {
       "type": "string",
@@ -94,8 +107,6 @@
         "description": "The password for the administrator account of the new domain"
       }
     },
-<<<<<<< HEAD
-=======
     "dcSku": {
       "type": "string",
       "metadata": {
@@ -103,7 +114,6 @@
       },
       "defaultValue": "Standard_DS1"
     },
->>>>>>> 45e8afe92ca2d6fcbd2dfbab983be4465ef6d3b0
     "localAdminUsername": {
       "type": "string",
       "metadata": {
@@ -122,45 +132,27 @@
         "description": "The FQDN of the AD Domain created "
       }
     },
-    "diagSaType": {
+    "pdcInternalIpAddress": {
       "type": "string",
       "metadata": {
-        "description": "Diagnostics storage account type"
-      },
-      "defaultValue": "Standard_LRS"
+        "description": "The internal IP address of Primary Domain Controller"
+      }
     },
-    "vmSaType": {
+    "bdcInternalIpAddress": {
       "type": "string",
       "metadata": {
-        "description": "Virtual machine storage account type"
-      },
-      "defaultValue": "Standard_LRS"
+        "description": "The internal IP address of the Backup Domain Controller"
+      }
     },
-    "pdcName": {
+    "jumpboxSku": {
       "type": "string",
       "metadata": {
-        "description": "The computer name of the Primary Domain Controller"
+        "description": "VM size of jumpbox."
       },
-      "defaultValue": "[concat(parameters('appName'),'-pdc')]"
-    },
-    "bdcName": {
-      "type": "string",
-      "metadata": {
-        "description": "The computer name of Backup Domain Controller"
-      },
-      "defaultValue": "[concat(parameters('appName'),'-bdc')]"
-    },
-    "dcSku": {
-      "type": "string",
-      "metadata": {
-        "description": "VM size of Domain Controllers."
-      },
-      "defaultValue": "Standard_A1"
+      "defaultValue": "Standard_DS1"
     }
   },
   "variables": {
-    // prefix nested deployments with parent deployment name
-    // so all related deployments can be identified in Azure portals
     "storageDeploymentName": "[concat(deployment().name,'-storage')]",
     "vnetDeploymentName": "[concat(deployment().name,'-vnet')]",
     "jumpboxDeploymentName": "[concat(deployment().name,'-jumpbox')]",
@@ -175,7 +167,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('_artifactsLocation'), '/storage/storage.json', parameters('_artifactsLocationSasToken'))]",
+          "uri": "[concat(parameters('_artifactsLocation'), '/storage/azureDeploy.json', parameters('_artifactsLocationSasToken'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -202,7 +194,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('_artifactsLocation'), '/vnet/vnet.json', parameters('_artifactsLocationSasToken'))]",
+          "uri": "[concat(parameters('_artifactsLocation'), '/vnet/azureDeploy.json', parameters('_artifactsLocationSasToken'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -218,11 +210,17 @@
           "dcSubnetAddressRange": {
             "value": "[parameters('dcSubnetAddressRange')]"
           },
-          "feSubnetAddressRange": {
-            "value": "[parameters('feSubnetAddressRange')]"
+          "webSubnetAddressRange": {
+            "value": "[parameters('webSubnetAddressRange')]"
+          },
+          "apiSubnetAddressRange": {
+            "value": "[parameters('apiSubnetAddressRange')]"
           },
           "dbSubnetAddressRange": {
             "value": "[parameters('dbSubnetAddressRange')]"
+          },
+          "jumpSubnetAddressRange": {
+            "value": "[parameters('jumpSubnetAddressRange')]"
           }
         }
       }
@@ -235,7 +233,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('_artifactsLocation'), '/jumpbox/jumpbox.json', parameters('_artifactsLocationSasToken'))]",
+          "uri": "[concat(parameters('_artifactsLocation'), '/jumpbox/azureDeploy.json', parameters('_artifactsLocationSasToken'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -254,17 +252,20 @@
           "vnetName": {
             "value": "[reference(variables('vnetDeploymentName')).outputs.vnetName.value]"
           },
-          "subnetName": {
-            "value": "[reference(variables('vnetDeploymentName')).outputs.dcSubnetName.value]"
+          "jumpboxSubnetName": {
+            "value": "[reference(variables('vnetDeploymentName')).outputs.jumpSubnetName.value]"
           },
-          "vmSaNames": {
-            "value": "[reference(variables('storageDeploymentName')).outputs.vmStorageAccountNames.value]"
+          "jumpboxStorageAccountName": {
+            "value": "[reference(variables('storageDeploymentName')).outputs.vmStorageAccountNames.value[4]]"
           },
-          "diagSaName": {
+          "diagStorageAccountName": {
             "value": "[reference(variables('storageDeploymentName')).outputs.diagStorageAccountName.value]"
           },
           "vnetResourceGroup": {
             "value": "[resourceGroup().name]"
+          },
+          "jumpboxSku": {
+            "value": "[parameters('jumpboxSku')]"
           }
         }
       }
@@ -277,12 +278,12 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('_artifactsLocation'), '/domain/domain.json', parameters('_artifactsLocationSasToken'))]",
+          "uri": "[concat(parameters('_artifactsLocation'), '/domain/azureDeploy.json', parameters('_artifactsLocationSasToken'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
           "_artifactsLocation": {
-            "value": "[parameters('_artifactsLocation')]"
+            "value": "[concat(parameters('_artifactsLocation'),'/domain')]"
           },
           "_artifactsLocationSasToken": {
             "value": "[parameters('_artifactsLocationSasToken')]"
@@ -299,32 +300,35 @@
           "domainAdminPassword": {
             "value": "[parameters('domainAdminPassword')]"
           },
-          "pdcName": {
-            "value": "[parameters('pdcName')]"
-          },
-          "bdcName": {
-            "value": "[parameters('bdcName')]"
-          },
           "appName": {
             "value": "[parameters('appName')]"
-          },
-          "dcSku": {
-            "value": "[parameters('dcSku')]"
           },
           "vnetName": {
             "value": "[reference(variables('vnetDeploymentName')).outputs.vnetName.value]"
           },
-          "subnetName": {
+          "domainSubnetName": {
             "value": "[reference(variables('vnetDeploymentName')).outputs.dcSubnetName.value]"
           },
-          "vmSaNames": {
-            "value": "[reference(variables('storageDeploymentName')).outputs.vmStorageAccountNames.value]"
-          },
-          "diagSaName": {
+          "diagStorageAccountName": {
             "value": "[reference(variables('storageDeploymentName')).outputs.diagStorageAccountName.value]"
           },
           "vnetResourceGroup": {
             "value": "[resourceGroup().name]"
+          },
+          "bdcStorageAccountName": {
+            "value": "[reference(variables('storageDeploymentName')).outputs.vmStorageAccountNames.value[1]]"
+          },
+          "pdcStorageAccountName": {
+            "value": "[reference(variables('storageDeploymentName')).outputs.vmStorageAccountNames.value[0]]"
+          },
+          "pdcInternalIpAddress": {
+            "value": "[parameters('pdcInternalIpAddress')]"
+          },
+          "bdcInternalIpAddress": {
+            "value": "[parameters('bdcInternalIpAddress')]"
+          },
+           "dcSku": {
+            "value": "[parameters('dcSku')]"
           }
         }
       }
