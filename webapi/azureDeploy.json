@@ -53,20 +53,15 @@
             "type": "string",
             "metadata": {
                 "description": "The internal IP address used when WebAPI cluster is accessed from Web Server cluster"
-            }
+            },
+            "defaultValue": "10.0.2.250"
         },
-        "vmStorageAccountNames": {
-            "type": "array",
-            "metadata": {
-                "description": "Array of existing storage account names to be used for VM's"
-            }
-        },
-        "diagStorageAccountName": {
-            "type": "string",
-            "metadata": {
-                "description": "Existing storage account names to be used for diagnostics"
-            }
-        },
+        // "diagStorageAccountName": {
+        //     "type": "string",
+        //     "metadata": {
+        //         "description": "Existing storage account names to be used for diagnostics"
+        //     }
+        // },
         "apiDnsName": {
             "type": "string",
             "defaultValue": "[concat(parameters('appName'),'-web')]",
@@ -127,27 +122,19 @@
         "webApiInternalLoadBalancerFrontend": "[concat(variables('webApiInternalLoadBalancerName'),'-frontend')]",
         "webApiPrefix": "[concat(parameters('appName'),'-api')]",
         "webApiInternalLoadBalancerName": "[concat(variables('webApiPrefix'), '-internal-lb')]",
-        "webApiOsDiskName": "[concat(variables('webApiPrefix'), '-osdisk')]",
+        // "webApiOsDiskName": "[concat(variables('webApiPrefix'), '-osdisk')]",
         "webApiPublicIPAddressName": "[concat(variables('webApiPrefix'), '-pip')]",
         "webApiPublicLoadBalancerBackend": "[concat(variables('webApiPublicLoadBalancerName'), '-backend')]",
         "webApiPublicLoadBalancerName": "[concat(variables('webApiPrefix'), '-public-lb')]",
-        "vhdContainerName": "[concat(variables('webApiPrefix'), '-vhd')]",
         "osType": {
             "publisher": "MicrosoftWindowsServer",
             "offer": "WindowsServer",
-            "sku": "2012-R2-Datacenter",
+            "sku": "2016-Datacenter",
             "version": "latest"
         },
         "domainAndUsername": "[concat(parameters('domainName'),'\\', parameters('domainJoinUsername'))]",
         "ouPath": "",
-        "domainJoinOptions": 3,
-        "vhdContainers": [
-            "[concat('https://', parameters('vmStorageAccountNames')[0], '.blob.core.windows.net/', variables('vhdContainerName'))]",
-            "[concat('https://', parameters('vmStorageAccountNames')[1], '.blob.core.windows.net/', variables('vhdContainerName'))]",
-            "[concat('https://', parameters('vmStorageAccountNames')[2], '.blob.core.windows.net/', variables('vhdContainerName'))]",
-            "[concat('https://', parameters('vmStorageAccountNames')[3], '.blob.core.windows.net/', variables('vhdContainerName'))]",
-            "[concat('https://', parameters('vmStorageAccountNames')[4], '.blob.core.windows.net/', variables('vhdContainerName'))]"
-        ]
+        "domainJoinOptions": 3
     },
     "resources": [
         {
@@ -249,7 +236,7 @@
             "type": "Microsoft.Compute/virtualMachineScaleSets",
             "name": "[variables('webApiPrefix')]",
             "location": "[parameters('resourceLocation')]",
-            "apiVersion": "2015-06-15",
+            "apiVersion": "2016-04-30-preview",
             "dependsOn": [
                 "[concat('Microsoft.Network/loadBalancers/', variables('webApiPublicLoadBalancerName'))]",
                 "[concat('Microsoft.Network/loadBalancers/', variables('webApiInternalLoadBalancerName'))]"
@@ -266,8 +253,7 @@
                 "virtualMachineProfile": {
                     "storageProfile": {
                         "osDisk": {
-                            "vhdContainers": "[variables('vhdContainers')]",
-                            "name": "[variables('webApiOsDiskName')]",
+                            // "name": "[variables('webApiOsDiskName')]",
                             "caching": "ReadOnly",
                             "createOption": "FromImage"
                         },

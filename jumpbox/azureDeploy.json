@@ -49,12 +49,7 @@
         "description": "Name of the subnet where the jumpbox should be deployed"
       }
     },
-    "jumpboxStorageAccountName": {
-      "type": "string",
-      "metadata": {
-        "description": "Existing storage account to be used for jumpbox OS disk"
-      }
-    },
+  
     "diagStorageAccountName": {
       "type": "string",
       "metadata": {
@@ -92,12 +87,11 @@
     "vnetID": "[resourceId(parameters('vnetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
     "jumpboxPublicIPAddressName": "[concat(parameters('jumpBoxName'),  '-pip')]",
     "jumpboxOSDiskName": "[concat(parameters('jumpBoxName'), '-osdisk')]",
-    "jumpboxVHDContainerName": "[concat(parameters('jumpBoxName'), '-vhd')]",
     "jumpboxNicName": "[concat(parameters('jumpBoxName'), '-nic')]",
     "osType": {
       "publisher": "MicrosoftWindowsServer",
       "offer": "WindowsServer",
-      "sku": "2012-R2-Datacenter",
+      "sku": "2016-Datacenter",
       "version": "latest"
     }
   },
@@ -140,7 +134,7 @@
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('jumpBoxName')]",
       "location": "[parameters('resourceLocation')]",
-      "apiVersion": "2015-06-15",
+      "apiVersion": "2016-04-30-preview",
       "dependsOn": [
         "[concat('Microsoft.Network/networkInterfaces/', variables('jumpboxNicName'))]"
       ],
@@ -157,9 +151,6 @@
           "imageReference": "[variables('osType')]",
           "osDisk": {
             "name": "[variables('jumpboxOSDiskName')]",
-            "vhd": {
-              "uri": "[concat('http://',parameters('jumpboxStorageAccountName'),'.blob.core.windows.net/',variables('jumpboxVHDContainerName'),'/',variables('jumpboxOSDiskName'),'.vhd')]"
-            },
             "caching": "ReadWrite",
             "createOption": "FromImage"
           }
@@ -181,10 +172,5 @@
     }
   ],
   "outputs": {
-   
-"jumpboxPublicIp": {
-      "type": "string",
-      "value": "[reference(variables('jumpboxPublicIPAddressName')).ipAddress]"
-    }
   }
 }

@@ -54,31 +54,22 @@
             "type": "string",
             "metadata": {
                 "description": "Name of the subnet where the Domain Controllers should be deployed"
-            }
+            },
+            "defaultValue": "[concat(parameters('appName'),'-dc')]"
         },
         "pdcInternalIpAddress": {
             "type": "string",
             "metadata": {
                 "description": "The internal IP address of Primary Domain Controller"
-            }
+            },
+            "defaultValue": "10.0.0.100"
         },
         "bdcInternalIpAddress": {
             "type": "string",
             "metadata": {
                 "description": "The internal IP address of the Backup Domain Controller"
-            }
-        },
-        "pdcStorageAccountName": {
-            "type": "string",
-            "metadata": {
-                "description": "Existing storage account name to be used for the Pimary Domain Controller OS Disk"
-            }
-        },
-        "bdcStorageAccountName": {
-            "type": "string",
-            "metadata": {
-                "description": "Existing storage account name to be used for the Backup Domain Controller OS Disk"
-            }
+            },
+            "defaultValue": "10.0.0.101"
         },
         "diagStorageAccountName": {
             "type": "string",
@@ -124,11 +115,10 @@
         "bdcOsDiskName": "[concat(variables('bdcName'),'-osdisk')]",
         "pdcDataDiskName": "[concat(variables('pdcName'),'-data-disk1')]",
         "bdcDataDiskName": "[concat(variables('bdcName'),'-data-disk1')]",
-        "dcVhdContainerName": "[concat(parameters('appName'), '-dc-vhd')]",
         "osType": {
             "publisher": "MicrosoftWindowsServer",
             "offer": "WindowsServer",
-            "sku": "2012-R2-Datacenter",
+            "sku": "2016-Datacenter",
             "version": "latest"
         },
         "dcDataDiskSize": 1000
@@ -137,9 +127,13 @@
         {
             "type": "Microsoft.Compute/availabilitySets",
             "name": "[variables('dcAvailSetName')]",
-            "apiVersion": "2015-06-15",
+            "apiVersion": "2016-04-30-preview",
             "location": "[parameters('resourceLocation')]",
-            "properties": {}
+            "properties": {
+                "platformFaultDomainCount": "2",
+                "platformUpdateDomainCount": "2",
+                "managed": "true"
+            }
         },
         {
             "type": "Microsoft.Network/networkInterfaces",
@@ -163,7 +157,7 @@
             }
         },
         {
-            "apiVersion": "2015-06-15",
+            "apiVersion": "2016-04-30-preview",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[variables('pdcName')]",
             "location": "[parameters('resourceLocation')]",
@@ -187,17 +181,11 @@
                     "imageReference": "[variables('osType')]",
                     "osDisk": {
                         "name": "[variables('pdcOsDiskName')]",
-                        "vhd": {
-                            "uri": "[concat('https://', parameters('pdcStorageAccountName'), '.blob.core.windows.net/', variables('dcVhdContainerName'),'/',variables('pdcOsDiskName'),'.vhd')]"
-                        },
                         "caching": "ReadWrite",
                         "createOption": "FromImage"
                     },
                     "dataDisks": [
                         {
-                            "vhd": {
-                                "uri": "[concat('http://',parameters('pdcStorageAccountName'),'.blob.core.windows.net/' , variables('dcVhdContainerName'),'/',variables('pdcDataDiskName'),'.vhd')]"
-                            },
                             "name": "[variables('pdcDataDiskName')]",
                             "caching": "None",
                             "diskSizeGB": "[variables('dcDataDiskSize')]",
@@ -287,7 +275,7 @@
             }
         },
         {
-            "apiVersion": "2015-06-15",
+            "apiVersion": "2016-04-30-preview",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[variables('bdcName')]",
             "location": "[parameters('resourceLocation')]",
@@ -311,17 +299,11 @@
                     "imageReference": "[variables('osType')]",
                     "osDisk": {
                         "name": "[variables('bdcOsDiskName')]",
-                        "vhd": {
-                            "uri": "[concat('https://', parameters('bdcStorageAccountName'), '.blob.core.windows.net/', variables('dcVhdContainerName'),'/',variables('bdcOsDiskName'),'.vhd')]"
-                        },
                         "caching": "ReadWrite",
                         "createOption": "FromImage"
                     },
                     "dataDisks": [
                         {
-                            "vhd": {
-                                "uri": "[concat('http://',parameters('bdcStorageAccountName'),'.blob.core.windows.net/' , variables('dcVhdContainerName'),'/',variables('bdcDataDiskName'),'.vhd')]"
-                            },
                             "name": "[variables('bdcDataDiskName')]",
                             "caching": "None",
                             "diskSizeGB": "[variables('dcDataDiskSize')]",

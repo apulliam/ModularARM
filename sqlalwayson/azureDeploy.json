@@ -276,12 +276,6 @@
             },
             "defaultValue": "alwayson-ag"
         },
-        "vmStorageAccountNames": {
-            "type": "array",
-            "metadata": {
-                "description": "Array of existing storage account names to be used for VM's"
-            }
-        },
         "diagStorageAccountName": {
             "type": "string",
             "metadata": {
@@ -315,9 +309,6 @@
         "sqlVhdContainerName": "[concat(parameters('deploymentPrefix'), '-sql-vhd')]",
         "sql1dataDisks": [
             {
-                "vhd": {
-                    "uri": "[concat('http://',parameters('vmStorageAccountNames')[1],'.blob.core.windows.net/',variables('sqlVhdContainerName'),'/', parameters('sqlVMName'), '1-data1.vhd')]"
-                },
                 "name": "[concat(parameters('sqlVMName'), '1-data-disk1')]",
                 "caching": "None",
                 "createOption": "Empty",
@@ -325,9 +316,6 @@
                 "lun": 0
             },
             {
-                "vhd": {
-                    "uri": "[concat('http://',parameters('vmStorageAccountNames')[2],'.blob.core.windows.net/',variables('sqlVhdContainerName'),'/', parameters('sqlVMName'), '1-data2.vhd')]"
-                },
                 "name": "[concat(parameters('sqlVMName'), '1-data-disk2')]",
                 "caching": "None",
                 "createOption": "Empty",
@@ -335,9 +323,6 @@
                 "lun": 1
             },
             {
-                "vhd": {
-                    "uri": "[concat('http://',parameters('vmStorageAccountNames')[3],'.blob.core.windows.net/',variables('sqlVhdContainerName'),'/', parameters('sqlVMName'), '1-data3.vhd')]"
-                },
                 "name": "[concat(parameters('sqlVMName'), '1-data-disk3')]",
                 "caching": "None",
                 "createOption": "Empty",
@@ -345,10 +330,7 @@
                 "lun": 2
             },
             {
-                "vhd": {
-                    "uri": "[concat('http://',parameters('vmStorageAccountNames')[4],'.blob.core.windows.net/',variables('sqlVhdContainerName'),'/', parameters('sqlVMName'), '1-data4.vhd')]"
-                },
-                "name": "[concat(parameters('sqlVMName'), '1-data-disk4')]",
+               "name": "[concat(parameters('sqlVMName'), '1-data-disk4')]",
                 "caching": "None",
                 "createOption": "Empty",
                 "diskSizeGB": "1000",
@@ -357,9 +339,6 @@
         ],
         "sql2dataDisks": [
             {
-                "vhd": {
-                    "uri": "[concat('http://',parameters('vmStorageAccountNames')[1],'.blob.core.windows.net/',variables('sqlVhdContainerName'),'/', parameters('sqlVMName'), '2-data1.vhd')]"
-                },
                 "name": "[concat(parameters('sqlVMName'), '2-data-disk1')]",
                 "caching": "None",
                 "createOption": "Empty",
@@ -367,9 +346,6 @@
                 "lun": 0
             },
             {
-                "vhd": {
-                    "uri": "[concat('http://',parameters('vmStorageAccountNames')[2],'.blob.core.windows.net/',variables('sqlVhdContainerName'),'/', parameters('sqlVMName'), '2-data2.vhd')]"
-                },
                 "name": "[concat(parameters('sqlVMName'), '2-data-disk2')]",
                 "caching": "None",
                 "createOption": "Empty",
@@ -377,9 +353,6 @@
                 "lun": 1
             },
             {
-                "vhd": {
-                    "uri": "[concat('http://',parameters('vmStorageAccountNames')[3],'.blob.core.windows.net/',variables('sqlVhdContainerName'),'/', parameters('sqlVMName'), '2-data3.vhd')]"
-                },
                 "name": "[concat(parameters('sqlVMName'), '2-data-disk3')]",
                 "caching": "None",
                 "createOption": "Empty",
@@ -387,9 +360,6 @@
                 "lun": 2
             },
             {
-                "vhd": {
-                    "uri": "[concat('http://',parameters('vmStorageAccountNames')[4],'.blob.core.windows.net/',variables('sqlVhdContainerName'),'/', parameters('sqlVMName'), '2-data4.vhd')]"
-                },
                 "name": "[concat(parameters('sqlVMName'), '2-data-disk4')]",
                 "caching": "None",
                 "createOption": "Empty",
@@ -469,7 +439,8 @@
             "location": "[parameters('location')]",
             "properties": {
                 "platformFaultDomainCount": "3",
-                "platformUpdateDomainCount": "3"
+                "platformUpdateDomainCount": "3",
+                "managed": "true"
             }
         },
         {
@@ -620,17 +591,11 @@
                     },
                     "osDisk": {
                         "name": "osdisk",
-                        "vhd": {
-                            "uri": "[concat('http://',parameters('vmStorageAccountNames')[0],'.blob.core.windows.net/',variables('sqlVhdContainerName'),'/',parameters('sqlVMName'), copyindex(), '-osdisk.vhd')]"
-                        },
                         "caching": "ReadWrite",
                         "createOption": "FromImage"
                     },
                     "dataDisks": [
                         {
-                            "vhd": {
-                                "uri": "[concat('http://',parameters('vmStorageAccountNames')[1],'.blob.core.windows.net/',variables('sqlVhdContainerName'),'/', parameters('sqlVMName'), copyindex(),'-data1.vhd')]"
-                            },
                             "name": "[concat(parameters('sqlVMName'), copyindex(), '-data-disk1')]",
                             "caching": "None",
                             "createOption": "Empty",
@@ -638,9 +603,6 @@
                             "lun": 0
                         },
                         {
-                            "vhd": {
-                                "uri": "[concat('http://',parameters('vmStorageAccountNames')[2],'.blob.core.windows.net/',variables('sqlVhdContainerName'),'/', parameters('sqlVMName'), copyindex(),'-data2.vhd')]"
-                            },
                             "name": "[concat(parameters('sqlVMName'), copyindex(),'-data-disk2')]",
                             "caching": "None",
                             "createOption": "Empty",
@@ -648,9 +610,6 @@
                             "lun": 1
                         }
                         // {
-                        //     "vhd": {
-                        //         "uri": "[concat('http://',parameters('vmStorageAccountNames')[3],'.blob.core.windows.net/',variables('sqlVhdContainerName'),'/', parameters('sqlVMName'), add(copyindex(),1),'-data3.vhd')]"
-                        //     },
                         //     "name": "[concat(parameters('sqlVMName'), add(copyindex(),1),'-data-disk3')]",
                         //     "caching": "None",
                         //     "createOption": "Empty",
@@ -658,9 +617,6 @@
                         //     "lun": 2
                         // },
                         // {
-                        //     "vhd": {
-                        //         "uri": "[concat('http://',parameters('vmStorageAccountNames')[4],'.blob.core.windows.net/',variables('sqlVhdContainerName'),'/', parameters('sqlVMName'),add(copyindex(),1), '-data4.vhd')]"
-                        //     },
                         //     "name": "[concat(parameters('sqlVMName'), add(copyindex(),1),'-data-disk4')]",
                         //     "caching": "None",
                         //     "createOption": "Empty",
@@ -714,17 +670,11 @@
                     },
                     "osDisk": {
                         "name": "osdisk",
-                        "vhd": {
-                            "uri": "[concat('http://',parameters('vmStorageAccountNames')[3],'.blob.core.windows.net/',variables('sqlVhdContainerName'),'/',parameters('sqlwVMName'),'-osdisk.vhd')]"
-                        },
                         "caching": "ReadWrite",
                         "createOption": "FromImage"
                     },
                     "dataDisks": [
                         {
-                            "vhd": {
-                                "uri": "[concat('http://',parameters('vmStorageAccountNames')[4],'.blob.core.windows.net/',variables('sqlVhdContainerName'),'/',parameters('sqlwVMName'),'-data-1.vhd')]"
-                            },
                             "name": "[concat(parameters('sqlwVMName'),'-data-disk1')]",
                             "caching": "None",
                             "createOption": "Empty",

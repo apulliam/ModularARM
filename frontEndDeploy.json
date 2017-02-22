@@ -14,8 +14,7 @@
             "type": "string",
             "metadata": {
                 "description": "Application name used as a prefix for ARM resources"
-            },
-            "defaultValue": "invs"
+            }
         },
         "resourceLocation": {
             "type": "string",
@@ -100,6 +99,7 @@
         },
         "webApiCount": {
             "type": "int",
+            "defaultValue": 2,
             "metadata": {
                 "description": "Number of web API VM instances (100 or less)."
             },
@@ -153,7 +153,8 @@
             "type": "string",
             "metadata": {
                 "description": "The IP address for the web API internal load balancer"
-            }
+            },
+            "defaultValue": "10.0.2.250"
            
         }
     },
@@ -162,33 +163,33 @@
         "webserverDeploymentName": "[concat(deployment().name,'-webserver')]"
     },
     "resources": [
-        {
-            "name": "[variables('storageDeploymentName')]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2015-01-01",
-            "dependsOn": [],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'), '/storage/azureDeploy.json', parameters('_artifactsLocationSasToken'))]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "resourceLocation": {
-                        "value": "[parameters('resourceLocation')]"
-                    },
-                    "appName": {
-                        "value": "[parameters('appName')]"
-                    },
-                    "vmSaType": {
-                        "value": "[parameters('vmStorageAccountType')]"
-                    },
-                    "diagSaType": {
-                        "value": "[parameters('diagStorageAccountType')]"
-                    }
-                }
-            }
-        },
+        // {
+        //     "name": "[variables('storageDeploymentName')]",
+        //     "type": "Microsoft.Resources/deployments",
+        //     "apiVersion": "2015-01-01",
+        //     "dependsOn": [],
+        //     "properties": {
+        //         "mode": "Incremental",
+        //         "templateLink": {
+        //             "uri": "[concat(parameters('_artifactsLocation'), '/storage/azureDeploy.json', parameters('_artifactsLocationSasToken'))]",
+        //             "contentVersion": "1.0.0.0"
+        //         },
+        //         "parameters": {
+        //             "resourceLocation": {
+        //                 "value": "[parameters('resourceLocation')]"
+        //             },
+        //             "appName": {
+        //                 "value": "[parameters('appName')]"
+        //             },
+        //             "vmSaType": {
+        //                 "value": "[parameters('vmStorageAccountType')]"
+        //             },
+        //             "diagSaType": {
+        //                 "value": "[parameters('diagStorageAccountType')]"
+        //             }
+        //         }
+        //     }
+        // },
         {
             "name": "[variables('webserverDeploymentName')]",
             "type": "Microsoft.Resources/deployments",
@@ -231,12 +232,9 @@
                     "domainJoinPassword": {
                         "value": "[parameters('domainJoinPassword')]"
                     },
-                    "vmStorageAccountNames": {
-                        "value": "[reference(variables('storageDeploymentName')).outputs.vmStorageAccountNames.value]"
-                    },
-                    "diagStorageAccountName": {
-                        "value": "[reference(variables('storageDeploymentName')).outputs.diagStorageAccountName.value]"
-                    },
+                    // "diagStorageAccountName": {
+                    //     "value": "[reference(variables('storageDeploymentName')).outputs.diagStorageAccountName.value]"
+                    // },
                     "webServerSku": {
                         "value": "[parameters('webServerSku')]"
                     },
@@ -279,12 +277,9 @@
                     "apiSubnetName": {
                         "value": "[parameters('apiSubnetName')]"
                     },
-                    "vmStorageAccountNames": {
-                        "value": "[reference(variables('storageDeploymentName')).outputs.vmStorageAccountNames.value]"
-                    },
-                    "diagStorageAccountName": {
-                        "value": "[reference(variables('storageDeploymentName')).outputs.diagStorageAccountName.value]"
-                    },
+                    // "diagStorageAccountName": {
+                    //     "value": "[reference(variables('storageDeploymentName')).outputs.diagStorageAccountName.value]"
+                    // },
                     "localAdminPassword": {
                         "value": "[parameters('localAdminPassword')]"
                     },

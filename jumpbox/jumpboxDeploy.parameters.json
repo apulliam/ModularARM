@@ -11,11 +11,8 @@
     "appName": {
       "value": "test"
     },
-    "jumpboxSaName": {
-      "value": "66klfb7h27zcatestvmsa4"
-    },
     "vnetResourceGroup": {
-      "value": "apulliam-core"
+      "value": "jumpbox-test"
     },
     "vnetName": {
       "value": "test-vnet"
@@ -23,8 +20,8 @@
     "jumpboxSubnetName": {
       "value": "test-jump"
     },
-    "diagSaName": {
-      "value": "cblem7ccvvvk4testdiagsa"
+    "diagStorageAccountName": {
+      "value": "jumpboxtestdiag"
     },
     "resourceLocation": {
       "value": "East US"

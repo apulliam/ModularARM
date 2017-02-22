@@ -136,13 +136,15 @@
       "type": "string",
       "metadata": {
         "description": "The internal IP address of Primary Domain Controller"
-      }
+      },
+      "defaultValue": "10.0.0.100"
     },
     "bdcInternalIpAddress": {
       "type": "string",
       "metadata": {
         "description": "The internal IP address of the Backup Domain Controller"
-      }
+      },
+      "defaultValue": "10.0.0.101"
     },
     "jumpboxSku": {
       "type": "string",
@@ -255,9 +257,6 @@
           "jumpboxSubnetName": {
             "value": "[reference(variables('vnetDeploymentName')).outputs.jumpSubnetName.value]"
           },
-          "jumpboxStorageAccountName": {
-            "value": "[reference(variables('storageDeploymentName')).outputs.vmStorageAccountNames.value[4]]"
-          },
           "diagStorageAccountName": {
             "value": "[reference(variables('storageDeploymentName')).outputs.diagStorageAccountName.value]"
           },
@@ -314,12 +313,6 @@
           },
           "vnetResourceGroup": {
             "value": "[resourceGroup().name]"
-          },
-          "bdcStorageAccountName": {
-            "value": "[reference(variables('storageDeploymentName')).outputs.vmStorageAccountNames.value[1]]"
-          },
-          "pdcStorageAccountName": {
-            "value": "[reference(variables('storageDeploymentName')).outputs.vmStorageAccountNames.value[0]]"
           },
           "pdcInternalIpAddress": {
             "value": "[parameters('pdcInternalIpAddress')]"

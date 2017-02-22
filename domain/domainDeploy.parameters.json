@@ -18,28 +18,17 @@
             "value": "test-vnet"
         },
         "vnetResourceGroup": {
-            "value": "apulliam-core"
-        },
-        "pdcStorageAccountName": {
-            "value": "oyo4a2cff3apqtestvmsa0"
-        },
-        "bdcStorageAccountName": {
-            "value": "x6xjobxnmjrjmtestvmsa1"
+            "value": "domain-test"
         },
         "domainSubnetName": {
             "value": "test-dc"
         },
         "diagStorageAccountName": {
-            "value": "cblem7ccvvvk4testdiagsa"
+            "value": "domaintestdiag"
         },
         "resourceLocation": {
             "value": "East US"
-        },
-        "pdcInternalIpAddress": {
-            "value": "10.0.0.100"
-        },
-        "bdcInternalIpAddress": {
-            "value": "10.0.0.101"
         }
+      
     }
 }

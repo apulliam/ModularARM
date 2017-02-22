@@ -20,12 +20,6 @@
         "apiSubnetName": {
             "value": "test-api"
         },
-        "webServerCount": {
-            "value": 2
-        },
-        "webApiCount": {
-            "value": 2
-        },
         "localAdminUsername": {
             "value": "testme"
         },
@@ -46,9 +40,7 @@
         },
         "apiDnsName": {
             "value": "test456"
-        },
-        "webApiInternalLoadBalancerIp": {
-            "value": "10.0.2.250"
         }
+    
     }
 }

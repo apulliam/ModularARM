@@ -100,44 +100,31 @@
             "metadata": {
                 "description": "The password of the user authorized to join machine to the domain"
             }
-        },
-        "vmStorageAccountNames": {
-            "type": "array",
-            "metadata": {
-                "description": "Array of existing storage account names to be used for VM's"
-            }
-        },
-        "diagStorageAccountName": {
-            "type": "string",
-            "metadata": {
-                "description": "Existing storage account names to be used for diagnostics"
-            }
         }
+        // "diagStorageAccountName": {
+        //     "type": "string",
+        //     "metadata": {
+        //         "description": "Existing storage account names to be used for diagnostics"
+        //     }
+        // }
     },
     "variables": {
         "vnetID": "[resourceId(parameters('vnetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
         "webServerPrefix": "[concat(parameters('appName'),'-web')]",
         "webServerLoadBalancerName": "[concat(variables('webServerPrefix'), '-lb')]",
         "webServerLoadBalancerBackend": "[concat(variables('webServerLoadBalancerName'), '-backend')]",
-        "webServerOsDiskName": "[concat(variables('webServerPrefix'), '-osdisk')]",
+        // "webServerOsDiskName": "[concat(variables('webServerPrefix'), '-osdisk')]",
         "webServerPublicIAddressName": "[concat(variables('webServerPrefix'), '-pip')]",
-        "vhdContainerName": "[concat(variables('webServerPrefix'), '-vhd')]",
         "osType": {
             "publisher": "MicrosoftWindowsServer",
             "offer": "WindowsServer",
-            "sku": "2012-R2-Datacenter",
+            "sku": "2016-Datacenter",
             "version": "latest"
         },
         "domainAndUsername": "[concat(parameters('domainName'),'\\', parameters('domainJoinUsername'))]",
         "ouPath": "",
-        "domainJoinOptions": 3,
-        "vhdContainers": [
-            "[concat('https://', parameters('vmStorageAccountNames')[0], '.blob.core.windows.net/', variables('vhdContainerName'))]",
-            "[concat('https://', parameters('vmStorageAccountNames')[1], '.blob.core.windows.net/', variables('vhdContainerName'))]",
-            "[concat('https://', parameters('vmStorageAccountNames')[2], '.blob.core.windows.net/', variables('vhdContainerName'))]",
-            "[concat('https://', parameters('vmStorageAccountNames')[3], '.blob.core.windows.net/', variables('vhdContainerName'))]",
-            "[concat('https://', parameters('vmStorageAccountNames')[4], '.blob.core.windows.net/', variables('vhdContainerName'))]"
-        ]
+        "domainJoinOptions": 3
+       
     },
     "resources": [
         {
@@ -182,7 +169,7 @@
             "type": "Microsoft.Compute/virtualMachineScaleSets",
             "name": "[variables('webServerPrefix')]",
             "location": "[parameters('resourceLocation')]",
-            "apiVersion": "2015-06-15",
+            "apiVersion": "2016-04-30-preview",
             "dependsOn": [
                 "[concat('Microsoft.Network/loadBalancers/', variables('webServerLoadBalancerName'))]"
             ],
@@ -198,8 +185,7 @@
                 "virtualMachineProfile": {
                     "storageProfile": {
                         "osDisk": {
-                            "vhdContainers": "[variables('vhdContainers')]",
-                            "name": "[variables('webServerOsDiskName')]",
+                            //"name": "[variables('webServerOsDiskName')]",
                             "caching": "ReadOnly",
                             "createOption": "FromImage"
                         },

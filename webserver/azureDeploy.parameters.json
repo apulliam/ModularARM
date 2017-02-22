@@ -9,7 +9,7 @@
             "value": "test789"
         },
         "vnetResourceGroup": {
-            "value": "apulliam-core"
+            "value": "test-webserver"
         },
         "vnetName": {
             "value": "test-vnet"
@@ -17,18 +17,9 @@
         "webSubnetName": {
             "value": "test-web"
         },
-        "vmStorageAccountNames": {
-            "value": [
-                "oyo4a2cff3apqtestvmsa0",
-                "x6xjobxnmjrjmtestvmsa1",
-                "gwws5ropi6wiatestvmsa2",
-                "db5iuzcz57usqtestvmsa3",
-                "66klfb7h27zcatestvmsa4"
-            ]
-        },
-        "diagStorageAccountName": {
-            "value": "testdiagsa"
-        },
+        // "diagStorageAccountName": {
+        //     "value": "testdiagsa"
+        // },
         "domainName": {
             "value": "test"
         },

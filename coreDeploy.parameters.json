@@ -22,14 +22,8 @@
         },
         "domainName": {
             "value": "test.com"
-        },
-      
-        "pdcInternalIpAddress": {
-            "value": "10.0.0.100"
-        },
-        "bdcInternalIpAddress": {
-            "value": "10.0.0.101"
         }
+      
       
     }
 }
