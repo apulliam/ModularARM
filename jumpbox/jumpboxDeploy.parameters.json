@@ -12,7 +12,7 @@
       "value": "test"
     },
     "vnetResourceGroup": {
-      "value": "jumpbox-test"
+      "value": "test"
     },
     "vnetName": {
       "value": "test-vnet"
@@ -21,7 +21,7 @@
       "value": "test-jump"
     },
     "diagStorageAccountName": {
-      "value": "jumpboxtestdiag"
+      "value": "dp4dwqnkwa2fktestdiagsa"
     },
     "resourceLocation": {
       "value": "East US"

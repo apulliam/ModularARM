@@ -173,6 +173,10 @@
             },
             "defaultValue": "Sunday"
         },
+        "autoPatchingEnable" : {
+            "type":"bool",
+            "defaultValue": "true"
+        },
         "autoPatchingStartHour": {
             "type": "string",
             "allowedValues": [
@@ -211,12 +215,13 @@
             "allowedValues": [
                 "SQL2012SP3-WS2012R2",
                 "SQL2014SP1-WS2012R2",
-                "SQL2016-WS2012R2"
+                "SQL2016-WS2012R2",
+                "SQL2016-WS2016"
             ],
             "metadata": {
                 "description": "The Sql Server Version"
             },
-            "defaultValue": "SQL2016-WS2012R2"
+            "defaultValue": "SQL2016-WS2016"
         },
         "numberOfSqlVMDisks": {
             "type": "int",
@@ -298,7 +303,7 @@
         "SQLAOProbe": "SQLAlwaysOnEndPointProbe",
         "windowsImagePublisher": "MicrosoftWindowsServer",
         "windowsImageOffer": "WindowsServer",
-        "windowsImageSKU": "2012-R2-Datacenter",
+        "windowsImageSKU": "2016-Datacenter",
         "sqlImagePublisher": "MicrosoftSQLServer",
         "sqlImageOffer": "[parameters('sqlServerVersion')]",
         "sqlImageSku": "Enterprise",
@@ -306,7 +311,6 @@
         "sqlBEAddressPoolID": "[concat(variables('sqllbID'),'/backendAddressPools/',variables('sqlLBBE'))]",
         "sqllbFEConfigID": "[concat(variables('sqllbID'),'/frontendIPConfigurations/',variables('sqlLBFE'))]",
         "sqllbProbeID": "[concat(variables('sqllbID'),'/probes/',variables('SQLAOProbe'))]",
-        "sqlVhdContainerName": "[concat(parameters('deploymentPrefix'), '-sql-vhd')]",
         "sql1dataDisks": [
             {
                 "name": "[concat(parameters('sqlVMName'), '1-data-disk1')]",

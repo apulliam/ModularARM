@@ -2,12 +2,6 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "_artifactsLocation": {
-            "value": "https://raw.githubusercontent.com/apulliam/ModularARM/master/"
-        },
-        "_artifactsLocationSasToken": {
-            "value": ""
-        },
         "deploymentPrefix": {
             "value": "test"
         },
@@ -36,7 +30,7 @@
             "value": "test@me1"
         },
         "vnetResourceGroup": {
-            "value": "apulliam-core"
+            "value": "test"
         },
         "vnetName": {
             "value": "test-vnet"
@@ -47,16 +41,10 @@
         "pdcName": {
             "value": "test-pdc"
         },
-        "vmStorageAccountNames": {
-            "value": []
-                
-        },
         "diagStorageAccountName": {
             "value": ""
         },
-        "sqlVMSize": {
-            "value": ""
-        },
+      
         "sqlVMName": {
             "value": ""
         },
@@ -90,11 +78,7 @@
         "autoPatchingEnable": {
             "value": ""
         },
-        "autoPatchingDay": {
-            "value": ""
-        },
-        "autoPatchingStartHour": {
-            "value": ""
-        }
+       
+     
     }
 }

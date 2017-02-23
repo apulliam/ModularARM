@@ -46,13 +46,6 @@
       },
       "defaultValue": "Standard_LRS"
     },
-    "vmSaType": {
-      "type": "string",
-      "metadata": {
-        "description": "Virtual machine storage account type"
-      },
-      "defaultValue": "Premium_LRS"
-    },
     "vnetAddressRange": {
       "type": "string",
       "metadata": {
@@ -178,9 +171,6 @@
           },
           "appName": {
             "value": "[parameters('appName')]"
-          },
-          "vmSaType": {
-            "value": "[parameters('vmSaType')]"
           },
           "diagSaType": {
             "value": "[parameters('diagSaType')]"

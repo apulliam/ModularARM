@@ -118,7 +118,7 @@
         "osType": {
             "publisher": "MicrosoftWindowsServer",
             "offer": "WindowsServer",
-            "sku": "2016-Datacenter",
+            "sku": "2012-R2-Datacenter",
             "version": "latest"
         },
         "dcDataDiskSize": 1000
@@ -223,7 +223,7 @@
                     "properties": {
                         "publisher": "Microsoft.Powershell",
                         "type": "DSC",
-                        "typeHandlerVersion": "2.9",
+                        "typeHandlerVersion": "2.21",
                         "autoUpgradeMinorVersion": true,
                         "settings": {
                             "modulesUrl": "[concat(parameters('_artifactsLocation'), '/CreateADPDC.ps1.zip')]",
@@ -341,7 +341,7 @@
                     "properties": {
                         "publisher": "Microsoft.Powershell",
                         "type": "DSC",
-                        "typeHandlerVersion": "2.9",
+                        "typeHandlerVersion": "2.21",
                         "autoUpgradeMinorVersion": true,
                         "settings": {
                             "modulesUrl": "[concat(parameters('_artifactsLocation'), '/CreateADBDC.ps1.zip')]",

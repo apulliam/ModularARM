@@ -18,13 +18,13 @@
             "value": "test-vnet"
         },
         "vnetResourceGroup": {
-            "value": "domain-test"
+            "value": "test"
         },
         "domainSubnetName": {
             "value": "test-dc"
         },
         "diagStorageAccountName": {
-            "value": "domaintestdiag"
+            "value": "dp4dwqnkwa2fktestdiagsa"
         },
         "resourceLocation": {
             "value": "East US"

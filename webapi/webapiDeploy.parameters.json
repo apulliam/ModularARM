@@ -5,7 +5,7 @@
         "appName": {
             "value": "test"
         },
-        "azureDnsName": {
+        "apiDnsName": {
             "value": "test456"
         },
         "vnetResourceGroup": {
@@ -18,7 +18,7 @@
             "value": "test-api"
         },
         // "diagStorageAccountName": {
-        //     "value": "testdiagsa"
+        //     "value": "webapitestdiag"
         // },
         "domainName": {
             "value": "test"

@@ -144,7 +144,7 @@
             "metadata": {
                 "description": "The Sql Server Version"
             },
-            "defaultValue": "SQL2016-WS2012R2"
+            "defaultValue": "SQL2016-WS2016"
         },
         "numberOfSqlVMDisks": {
             "type": "int",
@@ -207,14 +207,8 @@
                 "description": "Diagnostics storage account type"
             },
             "defaultValue": "Standard_LRS"
-        },
-        "vmSaType": {
-            "type": "string",
-            "metadata": {
-                "description": "Virtual machine storage account type"
-            },
-            "defaultValue": "Premium_LRS"
         }
+   
     },
     "variables": {
         "storageDeploymentName": "[concat(deployment().name,'-storage')]",
@@ -229,7 +223,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'), '/storage/storage.json', parameters('_artifactsLocationSasToken'))]",
+                    "uri": "[concat(parameters('_artifactsLocation'), '/storage/azureDeploy.json', parameters('_artifactsLocationSasToken'))]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -238,9 +232,6 @@
                     },
                     "appName": {
                         "value": "[parameters('appName')]"
-                    },
-                    "vmSaType": {
-                        "value": "[parameters('vmSaType')]"
                     },
                     "diagSaType": {
                         "value": "[parameters('diagSaType')]"
@@ -256,7 +247,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'), '/sqlalwayson/sqlalwayson.json', parameters('_artifactsLocationSasToken'))]",
+                    "uri": "[concat(parameters('_artifactsLocation'), '/sqlalwayson/azureDeploy.json', parameters('_artifactsLocationSasToken'))]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -304,9 +295,6 @@
                     },
                     "pdcName": {
                         "value": "[parameters('pdcName')]"
-                    },
-                    "vmStorageAccountNames": {
-                        "value": "[reference(variables('storageDeploymentName')).outputs.vmStorageAccountNames.value]"
                     },
                     "diagStorageAccountName": {
                         "value": "[reference(variables('storageDeploymentName')).outputs.diagStorageAccountName.value]"

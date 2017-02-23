@@ -1,4 +1,4 @@
-﻿$resourceGroupName="domain-test"
+﻿$resourceGroupName="test"
 $resourceGroupLocation = "East US"
 $templateFile = "azureDeploy.json"
 $templateParametersFile = "domainDeploy.parameters.json"
